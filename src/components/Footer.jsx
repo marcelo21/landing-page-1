@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container">
         <h3>FEMAS Tecnología Industrial</h3>
         <p>Córdoba, Argentina</p>
-        <p>Email: correo@correo.com</p>
+        <p>Email: fe.mas.ingenieria@gmail.com</p>
         <br />
         <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>
           &copy; {new Date().getFullYear()} FEMAS. Todos los derechos reservados.

@@ -8,7 +8,7 @@ const CtaSection = () => {
         <p style={{ marginBottom: '30px' }}>
           Hablemos sobre cómo podemos mejorar sus procesos de soldadura y automatización hoy mismo.
         </p>
-        <button className="btn" style={{ backgroundColor: 'white', color: '#333' }} onClick={() => window.location = 'mailto:correo@correo.com'}>
+        <button className="btn" style={{ backgroundColor: 'white', color: '#333' }} onClick={() => window.location = 'mailto:fe.mas.ingenieria@gmail.com'}>
           Contactar Ahora
         </button>
       </div>

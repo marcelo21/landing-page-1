@@ -1,9 +1,9 @@
 :root {
-  --primary-color: #0056b3; /* Azul industrial */
-  --secondary-color: #333333; /* Gris oscuro */
-  --accent-color: #ff6b00; /* Naranja para llamadas a la acción */
-  --bg-light: #f8f9fa;
-  --text-color: #444;
+  --primary-color: #F58220; /* Naranja corporativo (Logo) */
+  --secondary-color: #555555; /* Gris metálico (Logo) */
+  --accent-color: #FFC107; /* Amarillo/Dorado (Detalle logo) */
+  --bg-light: #f9f9f9;
+  --text-color: #333;
   --white: #ffffff;
   --padding-section: 80px 20px;
 }
@@ -39,12 +39,12 @@ body {
 }
 
 .btn-primary {
-  background-color: var(--accent-color);
+  background-color: var(--primary-color);
   color: var(--white);
 }
 
 .btn-primary:hover {
-  background-color: #e65100;
+  background-color: #d16000;
 }
 
 h2 {
