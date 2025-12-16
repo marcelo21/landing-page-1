@@ -1,3 +1,9 @@
+/**
+ * Features
+ * @description Sección de características diferenciadoras con imágenes
+ * Muestra dos características principales alternadas con contenido e imágenes
+ * @returns {JSX.Element} Sección con características de FEMAS
+ */
 import React from 'react';
 
 const Features = () => {
@@ -16,7 +22,9 @@ const Features = () => {
             </p>
           </div>
           {/* Placeholder visual simple */}
-          <div className="feature-image">🚗</div>
+          <div className="feature-image" style={{ overflow: 'hidden' }}>
+            <img src="/card_1.jpg" alt="Experiencia Automotriz" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
         </div>
 
         <div className="feature-item" style={{ flexDirection: 'row-reverse' }}>
@@ -28,7 +36,9 @@ const Features = () => {
               proveedores incompatibles.
             </p>
           </div>
-          <div className="feature-image">🔄</div>
+          <div className="feature-image" style={{ overflow: 'hidden' }}>
+            <img src="/card_2.jpg" alt="Soluciones Integrales" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
         </div>
       </div>
     </section>

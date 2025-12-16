@@ -1,7 +1,16 @@
+/**
+ * Services
+ * @description Grid de servicios principales de FEMAS Tecnología Industrial
+ * Renderiza tarjetas con iconos y descripciones de cada servicio
+ * @returns {JSX.Element} Sección con grid de servicios
+ */
 import React from 'react';
 
 const Services = () => {
-  // Datos de los servicios para fácil edición
+  /**
+   * Array de servicios
+   * @type {Array<{icon: string, title: string, desc: string}>}
+   */
   const servicesList = [
     {
       icon: "⚡",

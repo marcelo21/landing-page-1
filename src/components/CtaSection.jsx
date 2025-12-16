@@ -1,3 +1,8 @@
+/**
+ * CtaSection
+ * @description Sección de llamada a la acción (CTA) para contacto directo
+ * @returns {JSX.Element} Sección con botón de contacto por email
+ */
 import React from 'react';
 
 const CtaSection = () => {

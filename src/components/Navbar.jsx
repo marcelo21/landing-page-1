@@ -1,3 +1,8 @@
+/**
+ * Navbar
+ * @description Barra de navegación principal con enlaces y toggle de tema
+ * @returns {JSX.Element} Elemento nav con logo y enlaces de navegación
+ */
 import React from 'react';
 import ThemeToggle from './ThemeToggle';
 

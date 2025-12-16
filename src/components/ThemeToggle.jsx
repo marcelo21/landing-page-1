@@ -1,14 +1,26 @@
+/**
+ * ThemeToggle
+ * @description Componente que permite cambiar entre tema claro y oscuro
+ * Persiste la preferencia en localStorage y actualiza el atributo data-theme del documento
+ * @returns {JSX.Element} Botón con ícono de sol/luna
+ */
 import React, { useState, useEffect } from 'react';
 
 const ThemeToggle = () => {
   const [theme, setTheme] = useState('light');
 
+  /**
+   * Carga el tema guardado en localStorage al montar el componente
+   */
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light';
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
   }, []);
 
+  /**
+   * Alterna entre tema claro y oscuro y persiste la preferencia
+   */
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);

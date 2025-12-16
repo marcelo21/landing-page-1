@@ -1,3 +1,8 @@
+/**
+ * Footer
+ * @description Pie de página con información de contacto y copyright
+ * @returns {JSX.Element} Sección footer con datos de la empresa
+ */
 import React from 'react';
 
 const Footer = () => {

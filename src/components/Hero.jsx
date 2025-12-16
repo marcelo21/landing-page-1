@@ -1,3 +1,8 @@
+/**
+ * Hero
+ * @description Sección principal (hero) con mensaje de bienvenida y CTA
+ * @returns {JSX.Element} Sección hero con título, descripción y botón
+ */
 import React from 'react';
 
 const Hero = () => {
