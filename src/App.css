@@ -260,5 +260,6 @@ p.section-desc {
 @media (max-width: 768px) {
   .hero h1 { font-size: 2.5rem; }
   .feature-item { flex-direction: column; }
-  .nav-links { display: none; } /* Simplificación para móvil */
+  .nav-content { flex-direction: column; }
+  .nav-links { margin-top: 1rem; }
 }
