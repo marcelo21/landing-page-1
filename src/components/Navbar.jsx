@@ -1,4 +1,5 @@
 import React from 'react';
+import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   return (
@@ -9,6 +10,7 @@ const Navbar = () => {
           <a href="#servicios">Servicios</a>
           <a href="#nosotros">Nosotros</a>
           <a href="#contacto">Contacto</a>
+          <ThemeToggle />
         </div>
       </div>
     </nav>
