@@ -267,7 +267,22 @@ p.section-desc {
 /* Responsive Mobile */
 @media (max-width: 768px) {
   .hero h1 { font-size: 2.5rem; }
-  .feature-item { flex-direction: column; }
+  
+  .feature-item { 
+    flex-direction: column; 
+  }
+  
+  /* Forzar que las imágenes en mobile también se vean bien */
+  .feature-item .feature-image {
+    min-height: 250px;
+    height: auto;
+  }
+  
+  /* Asegurar que el segundo feature-item también sea columna */
+  .feature-item[style*="row-reverse"] {
+    flex-direction: column !important;
+  }
+  
   .nav-content { flex-direction: column; }
   .nav-links { margin-top: 1rem; }
 }
