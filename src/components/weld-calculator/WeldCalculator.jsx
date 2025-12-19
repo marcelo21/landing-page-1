@@ -87,6 +87,18 @@ const WeldCalculator = ({ onClose }) => {
                   />
                 </div>
               </div>
+              <div className="control-group">
+                <label>Espesor Chapa 3: {thicknesses[2]} mm {thicknesses[2] === 0 && "(Inactiva)"}</label>
+                <div className="slider-container">
+                  <input 
+                    type="range" 
+                    min="0" max="5.0" step="0.1"
+                    value={thicknesses[2]}
+                    onChange={(e) => handleThicknessChange(2, e.target.value)}
+                    className="weld-slider"
+                  />
+                </div>
+              </div>
             </>
           ) : (
             <>
@@ -181,7 +193,14 @@ const WeldCalculator = ({ onClose }) => {
             <div className="result-card info">
               <div className="result-label">Datos Calidad</div>
               <div style={{ fontSize: '0.9rem', color: '#c0caf5', marginTop: '0.5rem' }}>
-                <div>Nugget Min: <strong>{results.nuggetMin?.toFixed(2)} mm</strong></div>
+                {results.nugget2Min > 0 ? (
+                  <>
+                    <div>Nugget 1 Min: <strong>{results.nugget1Min?.toFixed(2)} mm</strong></div>
+                    <div>Nugget 2 Min: <strong>{results.nugget2Min?.toFixed(2)} mm</strong></div>
+                  </>
+                ) : (
+                  <div>Nugget Min: <strong>{results.nuggetMin?.toFixed(2)} mm</strong></div>
+                )}
                 <div>Punta Electrodo: <strong>{results.electrode?.toFixed(2)} mm</strong></div>
               </div>
             </div>

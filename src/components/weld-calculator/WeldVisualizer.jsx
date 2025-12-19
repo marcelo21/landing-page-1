@@ -13,7 +13,8 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
   const renderSpot = () => {
     const t1 = thicknesses[0] * scale;
     const t2 = thicknesses[1] * scale;
-    const totalHeight = t1 + t2;
+    const t3 = (thicknesses[2] || 0) * scale;
+    const totalHeight = t1 + t2 + t3;
     const startY = centerY - (totalHeight / 2);
 
     // Electrodes (simplified)
@@ -56,7 +57,21 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
           style={{ transition: 'all 0.3s ease' }}
         />
 
-        {/* Nugget (Visual representation of weld) */}
+        {/* Sheet 3 */}
+        {t3 > 0 && (
+          <rect 
+            x={centerX - 100} 
+            y={startY + t1 + t2} 
+            width={200} 
+            height={t3} 
+            fill={materialColor} 
+            stroke="#000" 
+            strokeWidth="1"
+            style={{ transition: 'all 0.3s ease' }}
+          />
+        )}
+
+        {/* Nugget 1 (between 1 and 2) */}
         <ellipse 
           cx={centerX} 
           cy={startY + t1} 
@@ -65,6 +80,18 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
           fill="url(#heatGradient)" 
           style={{ opacity: 0.8 }}
         />
+
+        {/* Nugget 2 (between 2 and 3) */}
+        {t3 > 0 && (
+          <ellipse 
+            cx={centerX} 
+            cy={startY + t1 + t2} 
+            rx={15} 
+            ry={8} 
+            fill="url(#heatGradient)" 
+            style={{ opacity: 0.8 }}
+          />
+        )}
 
         {/* Bottom Electrode */}
         <rect 
@@ -83,6 +110,11 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
         <text x={centerX - 110} y={startY + t1 + t2/2} textAnchor="end" fill="#fff" fontSize="12">
           {thicknesses[1]}mm
         </text>
+        {t3 > 0 && (
+          <text x={centerX - 110} y={startY + t1 + t2 + t3/2} textAnchor="end" fill="#fff" fontSize="12">
+            {thicknesses[2]}mm
+          </text>
+        )}
       </g>
     );
   };

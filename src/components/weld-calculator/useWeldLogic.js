@@ -23,7 +23,7 @@ export const useWeldLogic = () => {
   const [materialKey, setMaterialKey] = useState("1");
   
   // Spot Welding State
-  const [thicknesses, setThicknesses] = useState([1.5, 1.5]); // [chapa1, chapa2]
+  const [thicknesses, setThicknesses] = useState([1.5, 1.5, 0]); // [chapa1, chapa2, chapa3]
 
   // Projection Welding State
   const [projectionConfig, setProjectionConfig] = useState({
@@ -40,9 +40,12 @@ export const useWeldLogic = () => {
     let extraInfo = {};
 
     if (mode === 'spot') {
-      const t_ref = thicknesses.reduce((a, b) => a + b, 0) / thicknesses.length;
-      const t_min = Math.min(...thicknesses);
-      const t_max = Math.max(...thicknesses);
+      const activeThicknesses = thicknesses.filter(t => t > 0);
+      const t_ref = activeThicknesses.length > 0 
+        ? activeThicknesses.reduce((a, b) => a + b, 0) / activeThicknesses.length 
+        : 0;
+      const t_min = activeThicknesses.length > 0 ? Math.min(...activeThicknesses) : 0;
+      const t_max = activeThicknesses.length > 0 ? Math.max(...activeThicknesses) : 0;
 
       let T_base, I_base, F_base;
 
@@ -60,8 +63,21 @@ export const useWeldLogic = () => {
       I_final = I_base * matFactors.Ki;
       F_final = F_base * matFactors.Kf;
 
+      let nugget1Min = 0;
+      let nugget2Min = 0;
+
+      if (thicknesses[0] > 0 && thicknesses[1] > 0) {
+        nugget1Min = 5 * Math.sqrt(Math.min(thicknesses[0], thicknesses[1]));
+      }
+
+      if (thicknesses[1] > 0 && thicknesses[2] > 0) {
+        nugget2Min = 5 * Math.sqrt(Math.min(thicknesses[1], thicknesses[2]));
+      }
+
       extraInfo = {
-        nuggetMin: 5 * Math.sqrt(t_min),
+        nuggetMin: nugget1Min,
+        nugget1Min,
+        nugget2Min,
         electrode: 2 * t_max + 3,
         t_ref
       };
