@@ -113,6 +113,23 @@ const WeldCalculator = ({ onClose }) => {
                   <option value="Tornillo">Tornillo</option>
                 </select>
               </div>
+              
+              <div className="control-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <input 
+                  type="checkbox"
+                  id="geo-check"
+                  checked={projectionConfig.geo_proy === "Anular"}
+                  onChange={(e) => setProjectionConfig({
+                    ...projectionConfig, 
+                    geo_proy: e.target.checked ? "Anular" : "Esférica"
+                  })}
+                  style={{ width: 'auto', margin: 0 }}
+                />
+                <label htmlFor="geo-check" style={{ margin: 0, cursor: 'pointer' }}>
+                  Geometría Anular
+                </label>
+              </div>
+
               <div className="control-group">
                 <label>Espesor Base: {projectionConfig.t_chapa} mm</label>
                 <input 

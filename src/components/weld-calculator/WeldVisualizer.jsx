@@ -91,18 +91,38 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
     const t_chapa = projectionConfig.t_chapa * scale;
     const startY = centerY;
 
-    // Nut/Bolt dimensions (approximate based on M size)
+    // Nut/Bolt dimensions
     const mSize = parseInt(projectionConfig.rosca.replace('M', ''));
-    const partWidth = mSize * scale * 1.5; 
-    const partHeight = mSize * scale * 0.8;
+    // Make them look a bit more realistic/stylized
+    const partWidth = mSize * scale * 1.6; // Head width (across flats approx)
+    const partHeight = mSize * scale * 0.7; // Head height
+    const threadWidth = mSize * scale; // Thread diameter
+    const threadLength = mSize * scale * 2.0; // Thread length
+
+    // Chamfer size for "less square" look
+    const chamfer = partHeight * 0.25;
+
+    // Helper to draw a hex nut/bolt head side profile with chamfered top corners
+    const drawHeadProfile = (x, y, w, h) => {
+      // Points: Bottom-Left -> Top-Left(chamfer) -> Top-Right(chamfer) -> Bottom-Right -> Close
+      return `
+        M ${x} ${y + h} 
+        L ${x} ${y + chamfer} 
+        Q ${x} ${y} ${x + chamfer} ${y}
+        L ${x + w - chamfer} ${y} 
+        Q ${x + w} ${y} ${x + w} ${y + chamfer}
+        L ${x + w} ${y + h} 
+        Z
+      `;
+    };
 
     return (
       <g>
         {/* Sheet */}
         <rect 
-          x={centerX - 100} 
+          x={centerX - 120} 
           y={startY} 
-          width={200} 
+          width={240} 
           height={t_chapa} 
           fill={materialColor} 
           stroke="#000" 
@@ -110,36 +130,86 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
           style={{ transition: 'all 0.3s ease' }}
         />
 
-        {/* Nut/Bolt */}
+        {/* Hole lines in sheet (dashed to represent hidden/internal) */}
+        <line 
+          x1={centerX - threadWidth/2} y1={startY} 
+          x2={centerX - threadWidth/2} y2={startY + t_chapa} 
+          stroke="#000" strokeWidth="1" strokeDasharray="3 2" opacity="0.5"
+        />
+        <line 
+          x1={centerX + threadWidth/2} y1={startY} 
+          x2={centerX + threadWidth/2} y2={startY + t_chapa} 
+          stroke="#000" strokeWidth="1" strokeDasharray="3 2" opacity="0.5"
+        />
+
         {projectionConfig.tipo === 'Tuerca' ? (
-          <path 
-            d={`M ${centerX - partWidth/2} ${startY} 
-                L ${centerX + partWidth/2} ${startY} 
-                L ${centerX + partWidth/2} ${startY - partHeight} 
-                L ${centerX - partWidth/2} ${startY - partHeight} Z`}
-            fill="#555"
-            stroke="#333"
-          />
+          <g>
+            {/* Nut Body */}
+            <path 
+              d={drawHeadProfile(centerX - partWidth/2, startY - partHeight, partWidth, partHeight)}
+              fill="#777"
+              stroke="#333"
+              strokeWidth="1.5"
+            />
+            
+            {/* Inner hole lines in Nut */}
+            <line 
+              x1={centerX - threadWidth/2} y1={startY - partHeight} 
+              x2={centerX - threadWidth/2} y2={startY} 
+              stroke="#333" strokeWidth="1" 
+            />
+            <line 
+              x1={centerX + threadWidth/2} y1={startY - partHeight} 
+              x2={centerX + threadWidth/2} y2={startY} 
+              stroke="#333" strokeWidth="1" 
+            />
+            
+            {/* Thread indication lines inside nut */}
+            <line 
+              x1={centerX - threadWidth/2 + 2} y1={startY - partHeight} 
+              x2={centerX - threadWidth/2 + 2} y2={startY} 
+              stroke="#555" strokeWidth="0.5" 
+            />
+            <line 
+              x1={centerX + threadWidth/2 - 2} y1={startY - partHeight} 
+              x2={centerX + threadWidth/2 - 2} y2={startY} 
+              stroke="#555" strokeWidth="0.5" 
+            />
+          </g>
         ) : (
           // Bolt (Tornillo)
           <g>
-             {/* Head */}
-            <rect 
-              x={centerX - partWidth/2} 
-              y={startY - partHeight/2} 
-              width={partWidth} 
-              height={partHeight/2} 
-              fill="#555" 
-              stroke="#333"
-            />
-            {/* Thread */}
-            <rect 
-              x={centerX - (partWidth * 0.6)/2} 
-              y={startY - partHeight * 2} 
-              width={partWidth * 0.6} 
-              height={partHeight * 1.5} 
+             {/* Thread (going down through sheet) */}
+             <rect 
+              x={centerX - threadWidth/2} 
+              y={startY} 
+              width={threadWidth} 
+              height={threadLength} 
               fill="#666" 
               stroke="#333"
+              rx="2"
+            />
+            
+            {/* Thread texture */}
+            {Array.from({ length: 6 }).map((_, i) => (
+               <line 
+                 key={i}
+                 x1={centerX - threadWidth/2} 
+                 y1={startY + (i+1) * (threadLength/7)} 
+                 x2={centerX + threadWidth/2} 
+                 y2={startY + (i+1) * (threadLength/7) + 3} 
+                 stroke="#444" 
+                 strokeWidth="1"
+                 opacity="0.3"
+               />
+            ))}
+
+             {/* Head (sitting on sheet) */}
+            <path 
+              d={drawHeadProfile(centerX - partWidth/2, startY - partHeight, partWidth, partHeight)}
+              fill="#555" 
+              stroke="#333"
+              strokeWidth="1.5"
             />
           </g>
         )}
@@ -148,14 +218,14 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
         <ellipse 
           cx={centerX} 
           cy={startY} 
-          rx={partWidth/3} 
-          ry={5} 
+          rx={partWidth/2.5} 
+          ry={4} 
           fill="url(#heatGradient)" 
-          style={{ opacity: 0.8 }}
+          style={{ opacity: 0.8, mixBlendMode: 'screen' }}
         />
 
         {/* Labels */}
-        <text x={centerX - 110} y={startY + t_chapa/2} textAnchor="end" fill="#fff" fontSize="12">
+        <text x={centerX - 130} y={startY + t_chapa/2} textAnchor="end" fill="#fff" fontSize="12">
           {projectionConfig.t_chapa}mm
         </text>
         <text x={centerX} y={startY - partHeight - 10} textAnchor="middle" fill="#fff" fontSize="12">
