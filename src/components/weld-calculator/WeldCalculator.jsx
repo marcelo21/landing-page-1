@@ -3,6 +3,13 @@ import { useWeldLogic } from './useWeldLogic';
 import WeldVisualizer from './WeldVisualizer';
 import './WeldCalculator.css';
 
+/**
+ * WeldCalculator
+ * @description Calculadora avanzada de parámetros de soldadura (WeldMaster PRO)
+ * Permite calcular parámetros para soldadura por proyección y punto
+ * @param {function} onClose - Función para cerrar la calculadora y volver a servicios
+ * @returns {JSX.Element} Interfaz principal de la calculadora
+ */
 const WeldCalculator = ({ onClose }) => {
   const {
     mode, setMode,

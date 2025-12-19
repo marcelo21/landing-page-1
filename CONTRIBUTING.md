@@ -140,6 +140,10 @@ const savedTheme = localStorage.getItem('theme') || 'light';
 
 ## Estructura del Proyecto
 
+### Organización de Carpetas
+- Los componentes simples se ubican directamente en `src/components/`.
+- Los componentes complejos o módulos con múltiples archivos relacionados (como la calculadora) deben agruparse en una subcarpeta dentro de `src/components/` (ej: `src/components/weld-calculator/`).
+
 ```
 landing-page-1/
 ├── public/

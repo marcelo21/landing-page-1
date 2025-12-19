@@ -1,5 +1,15 @@
 import React from 'react';
 
+/**
+ * WeldVisualizer
+ * @description Componente de visualización SVG para la proyección de soldadura
+ * Renderiza dinámicamente las chapas y la proyección según los parámetros
+ * @param {string} mode - Modo de soldadura ('projection' o 'spot')
+ * @param {Object} thicknesses - Espesores de las chapas {t1, t2}
+ * @param {string} materialColor - Color hexadecimal del material seleccionado
+ * @param {Object} projectionConfig - Configuración calculada de la proyección {h, d, etc.}
+ * @returns {JSX.Element} Gráfico SVG interactivo
+ */
 const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) => {
   // SVG ViewBox dimensions
   const width = 400;

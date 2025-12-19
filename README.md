@@ -2,6 +2,15 @@
 
 Landing page creada con Vite + React para FEMAS Tecnología Industrial.
 
+## Características
+
+- **Diseño Responsivo**: Adaptable a dispositivos móviles, tablets y escritorio.
+- **Tema Claro/Oscuro**: Soporte nativo para cambio de tema visual.
+- **WeldMaster PRO**: Calculadora avanzada de parámetros de soldadura (Proyección y Puntos).
+  - Acceso restringido mediante login.
+  - Visualización interactiva de la soldadura.
+  - Soporte para múltiples chapas (hasta 3) y cálculo de nuggets.
+
 ## Ejecutar localmente
 
 ```bash
@@ -14,6 +23,7 @@ npm run dev
 - `index.html` - Punto de entrada
 - `src/` - Código fuente
   - `components/` - Componentes React separados
+    - `weld-calculator/` - Módulo de la calculadora WeldMaster PRO
   - `App.jsx` - Componente raíz
   - `App.css` - Estilos globales
 

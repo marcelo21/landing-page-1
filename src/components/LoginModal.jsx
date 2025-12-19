@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import './LoginModal.css';
 
+/**
+ * LoginModal
+ * @description Modal de autenticación para acceder a funciones premium (WeldMaster PRO)
+ * @param {function} onLogin - Función a ejecutar tras un login exitoso
+ * @param {function} onClose - Función para cerrar el modal
+ * @returns {JSX.Element} Modal con formulario de usuario y contraseña
+ */
 const LoginModal = ({ onLogin, onClose }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

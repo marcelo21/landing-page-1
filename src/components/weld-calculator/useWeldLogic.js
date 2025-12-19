@@ -18,6 +18,12 @@ const PROJECTION_DATA = {
   "M12": { T: 11, I_m: 5.0,  I_b: 13.0, F_m: 2.5, F_b: 4.5 },
 };
 
+/**
+ * useWeldLogic
+ * @description Hook personalizado que maneja la lógica de negocio de la calculadora
+ * Gestiona el estado de materiales, espesores y realiza los cálculos de parámetros
+ * @returns {Object} Estado y funciones de control de la calculadora
+ */
 export const useWeldLogic = () => {
   const [mode, setMode] = useState('spot'); // 'spot' | 'projection'
   const [materialKey, setMaterialKey] = useState("1");
