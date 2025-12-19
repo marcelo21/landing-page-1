@@ -4,18 +4,27 @@
  * Renderiza tarjetas con iconos y descripciones de cada servicio
  * @returns {JSX.Element} Sección con grid de servicios
  */
-import React from 'react';
+import React, { useState } from 'react';
+import WeldCalculator from './weld-calculator/WeldCalculator';
 
 const Services = () => {
+  const [showCalculator, setShowCalculator] = useState(false);
+
   /**
    * Array de servicios
-   * @type {Array<{icon: string, title: string, desc: string}>}
+   * @type {Array<{icon: string, title: string, desc: string, action?: () => void}>}
    */
   const servicesList = [
     {
       icon: "⚡",
       title: "Soldadura por Puntos",
       desc: "Especialistas en sistemas de soldadura para la industria automotriz, garantizando uniones perfectas."
+    },
+    {
+      icon: "🧮",
+      title: "WeldMaster PRO",
+      desc: "Calculadora avanzada de parámetros de soldadura. Simulación de stackup y cálculo de corriente/fuerza.",
+      action: () => setShowCalculator(true)
     },
     {
       icon: "🤖",
@@ -49,7 +58,12 @@ const Services = () => {
         
         <div className="grid-container">
           {servicesList.map((service, index) => (
-            <div key={index} className="card">
+            <div 
+              key={index} 
+              className={`card ${service.action ? 'interactive-card' : ''}`}
+              onClick={service.action}
+              style={service.action ? { cursor: 'pointer', border: '1px solid #7aa2f7' } : {}}
+            >
               <span className="card-icon">{service.icon}</span>
               <h3>{service.title}</h3>
               <p>{service.desc}</p>
@@ -57,6 +71,10 @@ const Services = () => {
           ))}
         </div>
       </div>
+      
+      {showCalculator && (
+        <WeldCalculator onClose={() => setShowCalculator(false)} />
+      )}
     </section>
   );
 };

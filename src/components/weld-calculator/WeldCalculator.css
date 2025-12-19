@@ -1,0 +1,216 @@
+.weld-calculator-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  color: #e0e0e0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.weld-calculator-container {
+  width: 100%;
+  max-width: 1400px;
+  height: 90vh;
+  background: #1a1b26;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: grid;
+  grid-template-columns: 300px 1fr 300px;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+  border: 1px solid #2f334d;
+}
+
+/* Header */
+.weld-header {
+  grid-column: 1 / -1;
+  padding: 1rem 1.5rem;
+  background: #16161e;
+  border-bottom: 1px solid #2f334d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.weld-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #7aa2f7;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #565f89;
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 0.25rem;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #f7768e;
+}
+
+/* Columns */
+.weld-panel {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.weld-panel.left {
+  background: #1f2335;
+  border-right: 1px solid #2f334d;
+}
+
+.weld-panel.center {
+  background: #24283b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.weld-panel.right {
+  background: #1f2335;
+  border-left: 1px solid #2f334d;
+}
+
+/* Controls */
+.control-group {
+  margin-bottom: 1.5rem;
+}
+
+.control-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #a9b1d6;
+}
+
+.weld-select, .weld-input {
+  width: 100%;
+  padding: 0.5rem;
+  background: #16161e;
+  border: 1px solid #414868;
+  border-radius: 6px;
+  color: #c0caf5;
+  font-size: 0.9rem;
+}
+
+.weld-select:focus, .weld-input:focus {
+  outline: none;
+  border-color: #7aa2f7;
+}
+
+.mode-toggle {
+  display: flex;
+  background: #16161e;
+  padding: 4px;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.mode-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #565f89;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.mode-btn.active {
+  background: #3d59a1;
+  color: #fff;
+}
+
+/* Sliders */
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.weld-slider {
+  flex: 1;
+  accent-color: #7aa2f7;
+}
+
+/* Results Cards */
+.result-card {
+  background: #16161e;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid #2f334d;
+  position: relative;
+  overflow: hidden;
+}
+
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.result-card.current::before { background: #7aa2f7; }
+.result-card.force::before { background: #9ece6a; }
+.result-card.time::before { background: #bb9af7; }
+.result-card.info::before { background: #e0af68; }
+
+.result-label {
+  font-size: 0.8rem;
+  color: #565f89;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.result-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #c0caf5;
+}
+
+.result-unit {
+  font-size: 1rem;
+  color: #565f89;
+  margin-left: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .weld-calculator-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 400px auto;
+    height: auto;
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+  
+  .weld-panel.left, .weld-panel.right {
+    border: none;
+    border-bottom: 1px solid #2f334d;
+  }
+}
