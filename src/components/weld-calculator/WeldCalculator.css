@@ -12,7 +12,7 @@
   align-items: center;
   padding: 2rem;
   box-sizing: border-box;
-  color: #e0e0e0;
+  color: var(--text-color);
   font-family: 'Inter', system-ui, sans-serif;
 }
 
@@ -20,22 +20,22 @@
   width: 100%;
   max-width: 1400px;
   height: 90vh;
-  background: #1a1b26;
+  background: var(--bg-surface);
   border-radius: 16px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   display: grid;
   grid-template-columns: 300px 1fr 300px;
   grid-template-rows: auto 1fr;
   overflow: hidden;
-  border: 1px solid #2f334d;
+  border: 1px solid var(--secondary-color);
 }
 
 /* Header */
 .weld-header {
   grid-column: 1 / -1;
   padding: 1rem 1.5rem;
-  background: #16161e;
-  border-bottom: 1px solid #2f334d;
+  background: var(--bg-light);
+  border-bottom: 1px solid var(--secondary-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -44,7 +44,7 @@
 .weld-header h2 {
   margin: 0;
   font-size: 1.25rem;
-  color: #7aa2f7;
+  color: var(--primary-color);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -53,7 +53,7 @@
 .close-btn {
   background: transparent;
   border: none;
-  color: #565f89;
+  color: var(--secondary-color);
   cursor: pointer;
   font-size: 1.5rem;
   padding: 0.25rem;
@@ -61,7 +61,7 @@
 }
 
 .close-btn:hover {
-  color: #f7768e;
+  color: var(--primary-color);
 }
 
 /* Columns */
@@ -71,12 +71,12 @@
 }
 
 .weld-panel.left {
-  background: #1f2335;
-  border-right: 1px solid #2f334d;
+  background: var(--bg-light);
+  border-right: 1px solid var(--secondary-color);
 }
 
 .weld-panel.center {
-  background: #24283b;
+  background: var(--bg-surface);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -85,8 +85,8 @@
 }
 
 .weld-panel.right {
-  background: #1f2335;
-  border-left: 1px solid #2f334d;
+  background: var(--bg-light);
+  border-left: 1px solid var(--secondary-color);
 }
 
 /* Controls */
@@ -98,37 +98,38 @@
   display: block;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
-  color: #a9b1d6;
+  color: var(--text-color);
 }
 
 .weld-select, .weld-input {
   width: 100%;
   padding: 0.5rem;
-  background: #16161e;
-  border: 1px solid #414868;
+  background: var(--bg-surface);
+  border: 1px solid var(--secondary-color);
   border-radius: 6px;
-  color: #c0caf5;
+  color: var(--text-color);
   font-size: 0.9rem;
 }
 
 .weld-select:focus, .weld-input:focus {
   outline: none;
-  border-color: #7aa2f7;
+  border-color: var(--primary-color);
 }
 
 .mode-toggle {
   display: flex;
-  background: #16161e;
+  background: var(--bg-surface);
   padding: 4px;
   border-radius: 8px;
   margin-bottom: 1.5rem;
+  border: 1px solid var(--secondary-color);
 }
 
 .mode-btn {
   flex: 1;
   background: transparent;
   border: none;
-  color: #565f89;
+  color: var(--secondary-color);
   padding: 0.5rem;
   cursor: pointer;
   border-radius: 6px;
@@ -138,8 +139,8 @@
 }
 
 .mode-btn.active {
-  background: #3d59a1;
-  color: #fff;
+  background: var(--primary-color);
+  color: var(--white);
 }
 
 /* Sliders */
@@ -151,16 +152,16 @@
 
 .weld-slider {
   flex: 1;
-  accent-color: #7aa2f7;
+  accent-color: var(--primary-color);
 }
 
 /* Results Cards */
 .result-card {
-  background: #16161e;
+  background: var(--bg-surface);
   border-radius: 12px;
   padding: 1.25rem;
   margin-bottom: 1rem;
-  border: 1px solid #2f334d;
+  border: 1px solid var(--secondary-color);
   position: relative;
   overflow: hidden;
 }
@@ -174,14 +175,14 @@
   height: 100%;
 }
 
-.result-card.current::before { background: #7aa2f7; }
+.result-card.current::before { background: var(--primary-color); }
 .result-card.force::before { background: #9ece6a; }
 .result-card.time::before { background: #bb9af7; }
-.result-card.info::before { background: #e0af68; }
+.result-card.info::before { background: var(--accent-color); }
 
 .result-label {
   font-size: 0.8rem;
-  color: #565f89;
+  color: var(--secondary-color);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
@@ -190,13 +191,18 @@
 .result-value {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #c0caf5;
+  color: var(--text-color);
 }
 
 .result-unit {
   font-size: 1rem;
-  color: #565f89;
+  color: var(--secondary-color);
   margin-left: 0.25rem;
+}
+
+/* Visualizer Stroke */
+.weld-visualizer-stroke {
+  stroke: var(--text-color);
 }
 
 /* Responsive */
@@ -211,6 +217,6 @@
   
   .weld-panel.left, .weld-panel.right {
     border: none;
-    border-bottom: 1px solid #2f334d;
+    border-bottom: 1px solid var(--secondary-color);
   }
 }

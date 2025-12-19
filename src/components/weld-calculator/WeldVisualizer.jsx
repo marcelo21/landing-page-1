@@ -10,6 +10,66 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
   // Scale factor for visualization (pixels per mm)
   const scale = 20; 
 
+  // Helper to determine contrasting stroke color
+  const getStrokeColor = (hexColor) => {
+    // Convert hex to RGB
+    const r = parseInt(hexColor.substr(1, 2), 16);
+    const g = parseInt(hexColor.substr(3, 2), 16);
+    const b = parseInt(hexColor.substr(5, 2), 16);
+    // Calculate luminance
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    // Return black for light colors, white (or light grey) for dark colors
+    return yiq >= 128 ? '#333333' : '#cccccc';
+  };
+
+  const strokeColor = getStrokeColor(materialColor || '#333333');
+
+  const renderElectrode = (x, y, width, height, isTop) => {
+    const tipHeight = 10;
+    const bodyHeight = height - tipHeight;
+    
+    // Points for the electrode shape
+    // Top electrode: Body rect + Tapered tip pointing down
+    // Bottom electrode: Tapered tip pointing up + Body rect
+    
+    let d = '';
+    if (isTop) {
+      // Body
+      d = `M ${x} ${y} 
+           L ${x + width} ${y} 
+           L ${x + width} ${y + bodyHeight} 
+           L ${x + width * 0.8} ${y + height} 
+           L ${x + width * 0.2} ${y + height} 
+           L ${x} ${y + bodyHeight} 
+           Z`;
+    } else {
+      // Bottom
+      d = `M ${x + width * 0.2} ${y} 
+           L ${x + width * 0.8} ${y} 
+           L ${x + width} ${y + tipHeight} 
+           L ${x + width} ${y + height} 
+           L ${x} ${y + height} 
+           L ${x} ${y + tipHeight} 
+           Z`;
+    }
+
+    return (
+      <g>
+        <path d={d} fill="url(#copperGradient)" stroke="#8B4513" strokeWidth="1" />
+        {/* Shine effect */}
+        <path 
+          d={isTop 
+            ? `M ${x + 5} ${y} L ${x + 5} ${y + bodyHeight} L ${x + width * 0.2 + 2} ${y + height}`
+            : `M ${x + width * 0.2 + 2} ${y} L ${x + 5} ${y + tipHeight} L ${x + 5} ${y + height}`
+          }
+          stroke="rgba(255,255,255,0.3)"
+          strokeWidth="3"
+          fill="none"
+        />
+      </g>
+    );
+  };
+
   const renderSpot = () => {
     const t1 = thicknesses[0] * scale;
     const t2 = thicknesses[1] * scale;
@@ -17,21 +77,14 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
     const totalHeight = t1 + t2 + t3;
     const startY = centerY - (totalHeight / 2);
 
-    // Electrodes (simplified)
+    // Electrodes
     const electrodeWidth = 40;
-    const electrodeHeight = 60;
+    const electrodeHeight = 80;
 
     return (
       <g>
         {/* Top Electrode */}
-        <rect 
-          x={centerX - electrodeWidth/2} 
-          y={startY - electrodeHeight} 
-          width={electrodeWidth} 
-          height={electrodeHeight} 
-          fill="#B87333" // Copper
-          rx="5"
-        />
+        {renderElectrode(centerX - electrodeWidth/2, startY - electrodeHeight, electrodeWidth, electrodeHeight, true)}
         
         {/* Sheet 1 */}
         <rect 
@@ -40,7 +93,7 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
           width={200} 
           height={t1} 
           fill={materialColor} 
-          stroke="#000" 
+          stroke={strokeColor}
           strokeWidth="1"
           style={{ transition: 'all 0.3s ease' }}
         />
@@ -52,7 +105,7 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
           width={200} 
           height={t2} 
           fill={materialColor} 
-          stroke="#000" 
+          stroke={strokeColor}
           strokeWidth="1"
           style={{ transition: 'all 0.3s ease' }}
         />
@@ -65,7 +118,7 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
             width={200} 
             height={t3} 
             fill={materialColor} 
-            stroke="#000" 
+            stroke={strokeColor}
             strokeWidth="1"
             style={{ transition: 'all 0.3s ease' }}
           />
@@ -94,24 +147,17 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
         )}
 
         {/* Bottom Electrode */}
-        <rect 
-          x={centerX - electrodeWidth/2} 
-          y={startY + totalHeight} 
-          width={electrodeWidth} 
-          height={electrodeHeight} 
-          fill="#B87333" // Copper
-          rx="5"
-        />
+        {renderElectrode(centerX - electrodeWidth/2, startY + totalHeight, electrodeWidth, electrodeHeight, false)}
 
         {/* Labels */}
-        <text x={centerX - 110} y={startY + t1/2} textAnchor="end" fill="#fff" fontSize="12">
+        <text x={centerX - 110} y={startY + t1/2} textAnchor="end" fill="currentColor" fontSize="12">
           {thicknesses[0]}mm
         </text>
-        <text x={centerX - 110} y={startY + t1 + t2/2} textAnchor="end" fill="#fff" fontSize="12">
+        <text x={centerX - 110} y={startY + t1 + t2/2} textAnchor="end" fill="currentColor" fontSize="12">
           {thicknesses[1]}mm
         </text>
         {t3 > 0 && (
-          <text x={centerX - 110} y={startY + t1 + t2 + t3/2} textAnchor="end" fill="#fff" fontSize="12">
+          <text x={centerX - 110} y={startY + t1 + t2 + t3/2} textAnchor="end" fill="currentColor" fontSize="12">
             {thicknesses[2]}mm
           </text>
         )}
@@ -157,7 +203,7 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
           width={240} 
           height={t_chapa} 
           fill={materialColor} 
-          stroke="#000" 
+          stroke={strokeColor}
           strokeWidth="1"
           style={{ transition: 'all 0.3s ease' }}
         />
@@ -166,12 +212,12 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
         <line 
           x1={centerX - threadWidth/2} y1={startY} 
           x2={centerX - threadWidth/2} y2={startY + t_chapa} 
-          stroke="#000" strokeWidth="1" strokeDasharray="3 2" opacity="0.5"
+          stroke={strokeColor} strokeWidth="1" strokeDasharray="3 2" opacity="0.5"
         />
         <line 
           x1={centerX + threadWidth/2} y1={startY} 
           x2={centerX + threadWidth/2} y2={startY + t_chapa} 
-          stroke="#000" strokeWidth="1" strokeDasharray="3 2" opacity="0.5"
+          stroke={strokeColor} strokeWidth="1" strokeDasharray="3 2" opacity="0.5"
         />
 
         {projectionConfig.tipo === 'Tuerca' ? (
@@ -257,10 +303,10 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
         />
 
         {/* Labels */}
-        <text x={centerX - 130} y={startY + t_chapa/2} textAnchor="end" fill="#fff" fontSize="12">
+        <text x={centerX - 130} y={startY + t_chapa/2} textAnchor="end" fill="currentColor" fontSize="12">
           {projectionConfig.t_chapa}mm
         </text>
-        <text x={centerX} y={startY - partHeight - 10} textAnchor="middle" fill="#fff" fontSize="12">
+        <text x={centerX} y={startY - partHeight - 10} textAnchor="middle" fill="currentColor" fontSize="12">
           {projectionConfig.rosca} {projectionConfig.tipo}
         </text>
       </g>
@@ -268,18 +314,25 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
   };
 
   return (
-    <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
+    <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet" style={{ color: 'var(--text-color)' }}>
       <defs>
         <radialGradient id="heatGradient">
           <stop offset="0%" stopColor="#ff4d4d" />
           <stop offset="50%" stopColor="#ff9933" />
           <stop offset="100%" stopColor="rgba(255, 153, 51, 0)" />
         </radialGradient>
+        <linearGradient id="copperGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#8B4513" />
+          <stop offset="20%" stopColor="#B87333" />
+          <stop offset="50%" stopColor="#CD853F" />
+          <stop offset="80%" stopColor="#B87333" />
+          <stop offset="100%" stopColor="#8B4513" />
+        </linearGradient>
       </defs>
       
       {/* Background Grid (Optional) */}
       <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1"/>
+        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeOpacity="0.1" strokeWidth="1"/>
       </pattern>
       <rect width="100%" height="100%" fill="url(#grid)" />
 
