@@ -6,9 +6,26 @@
  */
 import React, { useState } from 'react';
 import WeldCalculator from './weld-calculator/WeldCalculator';
+import LoginModal from './LoginModal';
 
 const Services = () => {
   const [showCalculator, setShowCalculator] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const handleWeldMasterClick = () => {
+    if (isAuthenticated) {
+      setShowCalculator(true);
+    } else {
+      setShowLogin(true);
+    }
+  };
+
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+    setShowLogin(false);
+    setShowCalculator(true);
+  };
 
   /**
    * Array de servicios
@@ -24,7 +41,7 @@ const Services = () => {
       icon: "🧮",
       title: "WeldMaster PRO",
       desc: "Calculadora avanzada de parámetros de soldadura. Simulación de stackup y cálculo de corriente/fuerza.",
-      action: () => setShowCalculator(true)
+      action: handleWeldMasterClick
     },
     {
       icon: "🤖",
@@ -71,6 +88,13 @@ const Services = () => {
           ))}
         </div>
       </div>
+      
+      {showLogin && (
+        <LoginModal 
+          onLogin={handleLoginSuccess} 
+          onClose={() => setShowLogin(false)} 
+        />
+      )}
       
       {showCalculator && (
         <WeldCalculator onClose={() => setShowCalculator(false)} />
