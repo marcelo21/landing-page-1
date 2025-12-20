@@ -182,26 +182,32 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
     // Nut/Bolt dimensions
     const mSize = parseInt(projectionConfig.rosca.replace('M', ''));
     // Make them look a bit more realistic/stylized
-    const partWidth = mSize * scale * 1.6; // Head width (across flats approx)
-    const partHeight = mSize * scale * 0.7; // Head height
+    const partWidth = mSize * scale * 1.8; // Head width (across flats approx)
+    const partHeight = mSize * scale * 0.8; // Head height
     const threadWidth = mSize * scale; // Thread diameter
     const threadLength = mSize * scale * 2.0; // Thread length
 
-    // Chamfer size for "less square" look
-    const chamfer = partHeight * 0.25;
+    // Helper to draw a 3D-looking hex head
+    const drawHexHead = (x, y, w, h) => {
+      const quarterW = w / 4;
+      
+      // We draw 3 vertical strips to simulate the hex faces seen from side
+      // Left Face
+      const leftPath = `M ${x} ${y + h*0.1} L ${x + quarterW} ${y} L ${x + quarterW} ${y + h} L ${x} ${y + h} Z`;
+      // Center Face
+      const centerPath = `M ${x + quarterW} ${y} L ${x + w - quarterW} ${y} L ${x + w - quarterW} ${y + h} L ${x + quarterW} ${y + h} Z`;
+      // Right Face
+      const rightPath = `M ${x + w - quarterW} ${y} L ${x + w} ${y + h*0.1} L ${x + w} ${y + h} L ${x + w - quarterW} ${y + h} Z`;
 
-    // Helper to draw a hex nut/bolt head side profile with chamfered top corners
-    const drawHeadProfile = (x, y, w, h) => {
-      // Points: Bottom-Left -> Top-Left(chamfer) -> Top-Right(chamfer) -> Bottom-Right -> Close
-      return `
-        M ${x} ${y + h} 
-        L ${x} ${y + chamfer} 
-        Q ${x} ${y} ${x + chamfer} ${y}
-        L ${x + w - chamfer} ${y} 
-        Q ${x + w} ${y} ${x + w} ${y + chamfer}
-        L ${x + w} ${y + h} 
-        Z
-      `;
+      return (
+        <g>
+          <path d={leftPath} fill="url(#steelGradientDark)" stroke="#333" strokeWidth="0.5" />
+          <path d={centerPath} fill="url(#steelGradientLight)" stroke="#333" strokeWidth="0.5" />
+          <path d={rightPath} fill="url(#steelGradientDark)" stroke="#333" strokeWidth="0.5" />
+          {/* Top chamfer highlight */}
+          <path d={`M ${x} ${y + h*0.1} Q ${x + w/2} ${y - h*0.1} ${x + w} ${y + h*0.1}`} fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1" />
+        </g>
+      );
     };
 
     return (
@@ -233,36 +239,33 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
         {projectionConfig.tipo === 'Tuerca' ? (
           <g>
             {/* Nut Body */}
-            <path 
-              d={drawHeadProfile(centerX - partWidth/2, startY - partHeight, partWidth, partHeight)}
-              fill="#777"
-              stroke="#333"
-              strokeWidth="1.5"
-            />
+            {drawHexHead(centerX - partWidth/2, startY - partHeight, partWidth, partHeight)}
             
             {/* Inner hole lines in Nut */}
             <line 
               x1={centerX - threadWidth/2} y1={startY - partHeight} 
               x2={centerX - threadWidth/2} y2={startY} 
-              stroke="#333" strokeWidth="1" 
+              stroke="#333" strokeWidth="1" opacity="0.3"
             />
             <line 
               x1={centerX + threadWidth/2} y1={startY - partHeight} 
               x2={centerX + threadWidth/2} y2={startY} 
-              stroke="#333" strokeWidth="1" 
+              stroke="#333" strokeWidth="1" opacity="0.3"
             />
             
             {/* Thread indication lines inside nut */}
-            <line 
-              x1={centerX - threadWidth/2 + 2} y1={startY - partHeight} 
-              x2={centerX - threadWidth/2 + 2} y2={startY} 
-              stroke="#555" strokeWidth="0.5" 
-            />
-            <line 
-              x1={centerX + threadWidth/2 - 2} y1={startY - partHeight} 
-              x2={centerX + threadWidth/2 - 2} y2={startY} 
-              stroke="#555" strokeWidth="0.5" 
-            />
+            {Array.from({ length: 4 }).map((_, i) => (
+               <line 
+                 key={i}
+                 x1={centerX - threadWidth/2 + 2} 
+                 y1={startY - partHeight + (i+1) * (partHeight/5)} 
+                 x2={centerX + threadWidth/2 - 2} 
+                 y2={startY - partHeight + (i+1) * (partHeight/5) + 2} 
+                 stroke="#333" 
+                 strokeWidth="0.5"
+                 opacity="0.3"
+               />
+            ))}
           </g>
         ) : (
           // Bolt (Tornillo)
@@ -273,32 +276,26 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
               y={startY} 
               width={threadWidth} 
               height={threadLength} 
-              fill="#666" 
+              fill="url(#boltBodyGradient)" 
               stroke="#333"
+              strokeWidth="1"
               rx="2"
             />
             
             {/* Thread texture */}
-            {Array.from({ length: 6 }).map((_, i) => (
-               <line 
+            {Array.from({ length: 8 }).map((_, i) => (
+               <path 
                  key={i}
-                 x1={centerX - threadWidth/2} 
-                 y1={startY + (i+1) * (threadLength/7)} 
-                 x2={centerX + threadWidth/2} 
-                 y2={startY + (i+1) * (threadLength/7) + 3} 
-                 stroke="#444" 
+                 d={`M ${centerX - threadWidth/2} ${startY + (i+1) * (threadLength/9)} 
+                     L ${centerX + threadWidth/2} ${startY + (i+1) * (threadLength/9) + 4}`}
+                 stroke="rgba(0,0,0,0.3)" 
                  strokeWidth="1"
-                 opacity="0.3"
+                 fill="none"
                />
             ))}
 
              {/* Head (sitting on sheet) */}
-            <path 
-              d={drawHeadProfile(centerX - partWidth/2, startY - partHeight, partWidth, partHeight)}
-              fill="#555" 
-              stroke="#333"
-              strokeWidth="1.5"
-            />
+             {drawHexHead(centerX - partWidth/2, startY - partHeight, partWidth, partHeight)}
           </g>
         )}
 
@@ -337,6 +334,23 @@ const WeldVisualizer = ({ mode, thicknesses, materialColor, projectionConfig }) 
           <stop offset="50%" stopColor="#CD853F" />
           <stop offset="80%" stopColor="#B87333" />
           <stop offset="100%" stopColor="#8B4513" />
+        </linearGradient>
+        <linearGradient id="steelGradientLight" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#888" />
+          <stop offset="50%" stopColor="#e0e0e0" />
+          <stop offset="100%" stopColor="#888" />
+        </linearGradient>
+        <linearGradient id="steelGradientDark" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#555" />
+          <stop offset="50%" stopColor="#999" />
+          <stop offset="100%" stopColor="#555" />
+        </linearGradient>
+        <linearGradient id="boltBodyGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#333" />
+          <stop offset="30%" stopColor="#777" />
+          <stop offset="50%" stopColor="#ccc" />
+          <stop offset="80%" stopColor="#777" />
+          <stop offset="100%" stopColor="#333" />
         </linearGradient>
       </defs>
       
