@@ -113,12 +113,12 @@ const HMIMicroSimulator = ({ onClose }) => {
   }, []);
 
   // Componentes UI Helpers
-  const StatusLamp = ({ active, color, label, icon: Icon }) => (
+  const StatusLamp = ({ active, color, label, icon: Icon, type }) => (
     <div className="io-item">
-      <div className={`status-lamp ${active ? 'active' : ''}`} 
-           style={active ? { backgroundColor: color, boxShadow: `0 0 15px ${color}`, borderColor: '#fff' } : {}}
+      <div className={`status-lamp ${active ? (type || 'active') : ''}`} 
+           style={active && !type ? { backgroundColor: color, boxShadow: `0 0 15px ${color}` } : {}}
       >
-        {active && Icon && <Icon size={14} color="#fff" style={{margin: '3px'}} />}
+        {active && Icon && <Icon size={14} color="#fff" />}
       </div>
       <span className="io-label">{label}</span>
     </div>
@@ -129,7 +129,7 @@ const HMIMicroSimulator = ({ onClose }) => {
       <div className="kpi-info">
         <span className="kpi-title">{title}</span>
         <div className="kpi-value">
-          {value} <span style={{fontSize: '0.8rem', color: '#666'}}>{unit}</span>
+          {value} <span className="kpi-unit">{unit}</span>
         </div>
       </div>
       <Icon size={24} color={color} />
@@ -143,15 +143,12 @@ const HMIMicroSimulator = ({ onClose }) => {
         {/* Header */}
         <header className="hmi-header">
           <div className="hmi-title">
-            <Activity size={20} color="#007acc" />
+            <Activity size={20} color="var(--primary-color)" />
             <span>HMI SIMULATOR <span style={{opacity: 0.5}}>v1.0</span></span>
           </div>
           
           <div className="hmi-status-indicator">
-            <span style={{
-              width: 8, height: 8, borderRadius: '50%', 
-              background: machineState === 'IDLE' ? '#a0a0a0' : machineState === 'RESULT_FAIL' ? '#ff4d4d' : '#4dff4d'
-            }}></span>
+            <span className={`status-dot ${machineState}`}></span>
             {machineState}
           </div>
 
@@ -170,15 +167,15 @@ const HMIMicroSimulator = ({ onClose }) => {
 
         <div className="hmi-content">
           {/* Panel Izquierdo: Visualización y Controles */}
-          <div className="left-column" style={{display: 'flex', flexDirection: 'column', gap: 20, overflow: 'hidden', height: '100%'}}>
+          <div className="left-column hmi-column">
             
             {/* Visualización de Proceso */}
-            <div className="hmi-panel" style={{flex: 1, minHeight: 0}}>
+            <div className="hmi-panel visualization-panel">
               <div className="hmi-panel-title">Visualización de Proceso</div>
               
               <div className="hmi-visualization">
                 <div className="gauge-container">
-                  <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: 5, fontSize: '0.8rem', color: '#aaa'}}>
+                  <div className="gauge-header">
                     <span>Presión / Carga</span>
                     <span>{Math.round(progress)}%</span>
                   </div>
@@ -194,7 +191,7 @@ const HMIMicroSimulator = ({ onClose }) => {
                 </div>
 
                 {machineState === MACH_STATES.RESULT_OK && (
-                  <div style={{marginTop: 20, color: '#4dff4d', display: 'flex', alignItems: 'center', gap: 10,  fontWeight: 'bold', fontSize: '1.2rem', animation: 'fadeIn 0.2s'}}>
+                  <div className="result-ok-msg">
                     <CheckCircle size={28} />
                     CICLO OK
                   </div>
@@ -216,10 +213,9 @@ const HMIMicroSimulator = ({ onClose }) => {
                 </button>
                 
                 <button 
-                  className="action-btn"
+                  className="action-btn stop-btn"
                   disabled={machineState === MACH_STATES.IDLE}
                   onClick={handleStop}
-                  style={{borderColor: '#ff4d4d', color: '#ff4d4d'}}
                 >
                   <Square size={24} />
                   PARADA
@@ -230,8 +226,8 @@ const HMIMicroSimulator = ({ onClose }) => {
           </div>
 
           {/* Panel Derecho: KPIs */}
-          <div className="right-column" style={{overflow: 'hidden', height: '100%'}}>
-             <div className="hmi-panel" style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+          <div className="right-column hmi-column">
+             <div className="hmi-panel kpi-panel">
                <div className="hmi-panel-title">Métricas (KPI)</div>
                
                <div className="kpi-grid">
@@ -260,20 +256,20 @@ const HMIMicroSimulator = ({ onClose }) => {
                  />
                </div>
 
-               <div style={{marginTop: 'auto', paddingTop: 10, borderTop: '1px solid #333'}}>
-                 <div className="hmi-panel-title" style={{border: 'none', marginBottom: 5}}>Estado de E/S</div>
-                 <div style={{display: 'flex', flexDirection: 'column', gap: 6}}>
-                    <div style={{display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#888'}}>
+               <div className="ios-status-section">
+                 <div className="hmi-panel-title no-border">Estado de E/S</div>
+                 <div className="ios-list">
+                    <div className="io-status-item">
                         <span>Motor Principal</span>
-                        <span style={{color: '#4dff4d'}}>ON</span>
+                        <span className="status-on">ON</span>
                     </div>
-                    <div style={{display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#888'}}>
+                    <div className="io-status-item">
                         <span>Presión Aire</span>
-                        <span style={{color: '#4dff4d'}}>6.2 Bar</span>
+                        <span className="status-on">6.2 Bar</span>
                     </div>
-                    <div style={{display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#888'}}>
+                    <div className="io-status-item">
                         <span>Temp. Agua</span>
-                        <span style={{color: '#00a8ff'}}>18°C</span>
+                        <span className="status-cool">18°C</span>
                     </div>
                  </div>
                </div>
@@ -285,5 +281,6 @@ const HMIMicroSimulator = ({ onClose }) => {
     </div>
   );
 };
+
 
 export default HMIMicroSimulator;
