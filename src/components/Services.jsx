@@ -6,10 +6,12 @@
  */
 import React, { useState } from 'react';
 import WeldCalculator from './weld-calculator/WeldCalculator';
+import HMIMicroSimulator from './hmi-simulator/HMIMicroSimulator';
 import LoginModal from './LoginModal';
 
 const Services = () => {
   const [showCalculator, setShowCalculator] = useState(false);
+  const [showHmi, setShowHmi] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -19,6 +21,10 @@ const Services = () => {
     } else {
       setShowLogin(true);
     }
+  };
+
+  const handleHmiClick = () => {
+     setShowHmi(true);
   };
 
   const handleLoginSuccess = () => {
@@ -46,7 +52,8 @@ const Services = () => {
     {
       icon: "🤖",
       title: "Automatización",
-      desc: "Diseño e implementación de automatismos pequeños y medianos para optimizar sus líneas de producción."
+      desc: "Diseño e implementación de automatismos pequeños y medianos para optimizar sus líneas de producción.",
+      action: handleHmiClick
     },
     {
       icon: "💻",
@@ -98,6 +105,10 @@ const Services = () => {
       
       {showCalculator && (
         <WeldCalculator onClose={() => setShowCalculator(false)} />
+      )}
+
+      {showHmi && (
+        <HMIMicroSimulator onClose={() => setShowHmi(false)} />
       )}
     </section>
   );
