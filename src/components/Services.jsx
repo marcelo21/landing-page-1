@@ -52,7 +52,7 @@ const Services = () => {
     {
       icon: "🤖",
       title: "Automatización",
-      desc: "Diseño e implementación de automatismos pequeños y medianos para optimizar sus líneas de producción.",
+      desc: "Diseño e implementación de automatismos y HMIs personalizados para optimizar y visualizar sus líneas de producción.",
       action: handleHmiClick
     },
     {
