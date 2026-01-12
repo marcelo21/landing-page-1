@@ -40,15 +40,15 @@ const WeldCalculator = ({ onClose }) => {
 
         {/* Left Panel: Configuration */}
         <div className="weld-panel left">
-          <div className="mode-toggle">
+          <div className="toggle-group main-toggle">
             <button 
-              className={`mode-btn ${mode === 'spot' ? 'active' : ''}`}
+              className={`toggle-btn ${mode === 'spot' ? 'active' : ''}`}
               onClick={() => setMode('spot')}
             >
               Puntos
             </button>
             <button 
-              className={`mode-btn ${mode === 'projection' ? 'active' : ''}`}
+              className={`toggle-btn ${mode === 'projection' ? 'active' : ''}`}
               onClick={() => setMode('projection')}
             >
               Proyección
@@ -132,21 +132,35 @@ const WeldCalculator = ({ onClose }) => {
                   <option value="Tornillo">Tornillo</option>
                 </select>
               </div>
+
+              <div className="control-group">
+                <label>Proyecciones</label>
+                <select 
+                  className="weld-select"
+                  value={projectionConfig.n_proy}
+                  onChange={(e) => setProjectionConfig({...projectionConfig, n_proy: parseInt(e.target.value)})}
+                >
+                  <option value={3}>3 Proyecciones</option>
+                  <option value={4}>4 Proyecciones</option>
+                </select>
+              </div>
               
-              <div className="control-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <input 
-                  type="checkbox"
-                  id="geo-check"
-                  checked={projectionConfig.geo_proy === "Anular"}
-                  onChange={(e) => setProjectionConfig({
-                    ...projectionConfig, 
-                    geo_proy: e.target.checked ? "Anular" : "Esférica"
-                  })}
-                  style={{ width: 'auto', margin: 0 }}
-                />
-                <label htmlFor="geo-check" style={{ margin: 0, cursor: 'pointer' }}>
-                  Geometría Anular
-                </label>
+              <div className="control-group">
+                <label>Geometría</label>
+                <div className="toggle-group">
+                  <button 
+                    className={`toggle-btn ${projectionConfig.geo_proy === 'Esférica' ? 'active' : ''}`}
+                    onClick={() => setProjectionConfig({...projectionConfig, geo_proy: 'Esférica'})}
+                  >
+                    Esférica
+                  </button>
+                  <button 
+                    className={`toggle-btn ${projectionConfig.geo_proy === 'Anular' ? 'active' : ''}`}
+                    onClick={() => setProjectionConfig({...projectionConfig, geo_proy: 'Anular'})}
+                  >
+                    Anular
+                  </button>
+                </div>
               </div>
 
               <div className="control-group">
@@ -175,6 +189,10 @@ const WeldCalculator = ({ onClose }) => {
 
         {/* Right Panel: Results */}
         <div className="weld-panel right">
+          <div className="panel-header">
+            <h3 className="panel-title">Métricas de Producción</h3>
+          </div>
+
           <div className="result-card current">
             <div className="result-label">Intensidad</div>
             <div className="result-value">
