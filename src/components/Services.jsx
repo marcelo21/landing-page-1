@@ -6,19 +6,32 @@
  */
 import React, { useState } from 'react';
 import WeldCalculator from './weld-calculator/WeldCalculator';
+import RogowskiCalculator from './rogowski-calculator/RogowskiCalculator';
 import HMIMicroSimulator from './hmi-simulator/HMIMicroSimulator';
 import LoginModal from './LoginModal';
 
 const Services = () => {
   const [showCalculator, setShowCalculator] = useState(false);
+  const [showRogowski, setShowRogowski] = useState(false);
   const [showHmi, setShowHmi] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
 
   const handleWeldMasterClick = () => {
     if (isAuthenticated) {
       setShowCalculator(true);
     } else {
+      setPendingAction('weld');
+      setShowLogin(true);
+    }
+  };
+
+  const handleRogowskiClick = () => {
+    if (isAuthenticated) {
+      setShowRogowski(true);
+    } else {
+      setPendingAction('rogowski');
       setShowLogin(true);
     }
   };
@@ -30,7 +43,14 @@ const Services = () => {
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
     setShowLogin(false);
-    setShowCalculator(true);
+    
+    if (pendingAction === 'rogowski') {
+      setShowRogowski(true);
+    } else {
+      // Default or weld
+      setShowCalculator(true);
+    }
+    setPendingAction(null);
   };
 
   /**
@@ -68,7 +88,8 @@ const Services = () => {
     {
       icon: "⚙️",
       title: "Hardware Especializado",
-      desc: "Fabricación de hardware electrónico y mecánico específico para necesidades industriales únicas."
+      desc: "Fabricación de hardware electrónico y mecánico y diseño de bobinas Rogowski.",
+      action: handleRogowskiClick
     }
   ];
 
@@ -105,6 +126,10 @@ const Services = () => {
       
       {showCalculator && (
         <WeldCalculator onClose={() => setShowCalculator(false)} />
+      )}
+
+      {showRogowski && (
+        <RogowskiCalculator onClose={() => setShowRogowski(false)} />
       )}
 
       {showHmi && (

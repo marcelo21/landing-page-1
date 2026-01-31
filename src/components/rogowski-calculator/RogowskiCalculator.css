@@ -1,0 +1,224 @@
+.rogowski-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  color: var(--text-color);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.rogowski-container {
+  width: 100%;
+  max-width: 1400px;
+  height: 90vh;
+  background: var(--bg-surface);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: grid;
+  grid-template-columns: 320px 1fr 320px; /* Slightly wider panels */
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+  border: 1px solid var(--secondary-color);
+}
+
+/* Header */
+.rogowski-header {
+  grid-column: 1 / -1;
+  padding: 1rem 1.5rem;
+  background: var(--bg-light);
+  border-bottom: 1px solid var(--secondary-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rogowski-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--secondary-color);
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 0.25rem;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: var(--primary-color);
+}
+
+/* Columns */
+.rogowski-panel {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.rogowski-panel.left {
+  background: var(--bg-light);
+  border-right: 1px solid var(--secondary-color);
+}
+
+.rogowski-panel.center {
+  background: var(--bg-surface);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 1rem; /* Añadir padding para que el SVG no toque los bordes */
+}
+
+.rogowski-panel.right {
+  background: var(--bg-light);
+  border-left: 1px solid var(--secondary-color);
+}
+
+.panel-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+  border-bottom: 1px solid var(--secondary-color);
+  padding-bottom: 6px;
+  display: block;
+}
+
+/* Controls */
+.control-group {
+  margin-bottom: 1.2rem;
+}
+
+.control-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-color);
+}
+
+.rogowski-select, .rogowski-input {
+  width: 100%;
+  padding: 0.6rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--secondary-color);
+  border-radius: 6px;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.rogowski-select:focus, .rogowski-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.toggle-group {
+  display: flex;
+  background: var(--bg-surface);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--secondary-color);
+}
+
+.toggle-group.main-toggle {
+  margin-bottom: 1.5rem;
+}
+
+.toggle-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--secondary-color);
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: var(--primary-color);
+  color: var(--white);
+}
+
+/* Results Cards */
+.result-card {
+  background: var(--bg-surface);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--secondary-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.result-card.viable::before { background: #9ece6a; } /* Green */
+.result-card.error::before { background: #f7768e; } /* Red */
+.result-card.info::before { background: var(--accent-color); }
+.result-card.warning::before { background: #e0af68; } /* Orange */
+
+.result-label {
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.result-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.result-unit {
+  font-size: 1rem;
+  color: var(--secondary-color);
+  margin-left: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .rogowski-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 400px auto;
+    height: auto;
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+  
+  .rogowski-panel.left, .rogowski-panel.right {
+    border: none;
+    border-bottom: 1px solid var(--secondary-color);
+  }
+}
