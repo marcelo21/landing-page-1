@@ -46,12 +46,16 @@ const Services = () => {
     
     if (pendingAction === 'rogowski') {
       setShowRogowski(true);
-    } else {
-      // Default or weld
+    } else if (pendingAction === 'weld') {
       setShowCalculator(true);
     }
     setPendingAction(null);
   };
+
+  // Determinar datos para el login modal
+  const loginAppData = pendingAction === 'rogowski' 
+    ? { name: 'Rogowski Calculator', icon: '⚙️' }
+    : { name: 'WeldMaster PRO', icon: '🧮' };
 
   /**
    * Array de servicios
@@ -121,6 +125,8 @@ const Services = () => {
         <LoginModal 
           onLogin={handleLoginSuccess} 
           onClose={() => setShowLogin(false)} 
+          appName={loginAppData.name}
+          appIcon={loginAppData.icon}
         />
       )}
       
