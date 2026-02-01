@@ -5,12 +5,21 @@ import React, { useMemo } from 'react';
  * @description Renderiza un SVG técnico (Blueprint style) o Realista del toroide.
  * @param {string} visualMode - 'blueprint' | 'realistic'
  */
-const RogowskiVisualizer = ({ inputs, results, visualMode = 'blueprint' }) => {
+const RogowskiVisualizer = ({ inputs = {}, results = {}, visualMode = 'blueprint' }) => {
   // Dimensiones base
   const width = 600;
   const height = 500;
+  
+  // Dividimos el canvas en dos zonas:
+  // Parte Superior (0 - 320): Gráfico Bobina
+  // Parte Inferior (320 - 500): Sección y Datos
+  
+  // Centro para la bobina
+  const centerTopY = 160; 
   const centerX = width / 2;
-  const centerY = 220;
+  
+  // Coordenadas fijas para la parte inferior
+  const bottomSectionY = 360;
 
   const isBlueprint = visualMode === 'blueprint';
 
@@ -26,7 +35,8 @@ const RogowskiVisualizer = ({ inputs, results, visualMode = 'blueprint' }) => {
       coilStroke: "#00f0ff",
       coilOpacity: 0.9,
       coreFill: "url(#hatch)",
-      coreStrokeOpacity: 0.3
+      coreStrokeOpacity: 0.3,
+      divider: "#1e2a45"
     },
     realistic: {
       bg: "linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%)", // Fondo degradado sutil
@@ -38,7 +48,8 @@ const RogowskiVisualizer = ({ inputs, results, visualMode = 'blueprint' }) => {
       coilStroke: "url(#copperGradient)", // Cobre real
       coilOpacity: 1,
       coreFill: "url(#coreRealGradient)",
-      coreStrokeOpacity: 0.8
+      coreStrokeOpacity: 0.8,
+      divider: "rgba(255,255,255,0.1)"
     }
   };
 
@@ -47,32 +58,54 @@ const RogowskiVisualizer = ({ inputs, results, visualMode = 'blueprint' }) => {
   const hasResults = results && !results.error && results.vueltas > 0;
 
   // Cálculos de geometría visual
-  const { r_final, w_visual, h_visual, d_real, numDispTurns } = useMemo(() => {
-    const d_real_val = inputs.d_bobina_mm || (inputs.longitud_tira_mm / Math.PI) || 100;
+  const { r_final, w_coil, w_section, h_section, d_real, numDispTurns } = useMemo(() => {
+    // Safety check para inputs
+    if (!inputs || Object.keys(inputs).length === 0) {
+        return { r_final: 100, w_coil: 10, w_section: 20, h_section: 40, d_real: 200, numDispTurns: 100 };
+    }
+
+    // Sanitizar inputs
+    const d_val = Number(inputs.d_bobina_mm) || 0;
+    const l_val = Number(inputs.longitud_tira_mm) || 0;
+    const h_nucleo_val = Number(inputs.altura_nucleo_mm) || 20;
+    const w_nucleo_val = Number(inputs.espesor_nucleo_mm) || 10;
     
-    // Escala para que quepa en el canvas (max d ~350mm -> 300px)
-    const pxPerMm = 280 / (d_real_val || 1);
+    // Si no hay diametro definido, calcularlo desde la longitud o usar default
+    const d_real_val = d_val || (l_val / Math.PI) || 100;
+    
+    // --- 1. ESCALA PARA LA BOBINA (VISTA SUPERIOR) ---
+    // Escala para que quepa en la MITAD del canvas (aprox 300px alto)
+    const pxPerMmCoil = 260 / (d_real_val || 1);
     
     // Radios visuales
-    const r_vis = (d_real_val / 2) * pxPerMm;
-    const w_vis = (inputs.espesor_nucleo_mm || 10) * pxPerMm;
-    const h_vis = (inputs.altura_nucleo_mm || 20) * pxPerMm;
+    const r_vis = (d_real_val / 2) * pxPerMmCoil;
+    // Clampeado para evitar desaparecer o salir de pantalla
+    const r_final_clamped = Math.min(Math.max(r_vis, 40), 130);
+    
+    // El grosor del trazo de la bobina en la vista superior
+    // lo escalamos un poco pero con limites estrictos
+    const w_coil_vis = w_nucleo_val * (pxPerMmCoil * 0.5); 
+    const w_coil_final = Math.min(Math.max(w_coil_vis, 4), 30);
 
-    // Clamps para evitar roturas visuales extremas
-    const r_final_clamped = Math.min(Math.max(r_vis, 60), 140);
-    // Limitar espesor visual para que no tape todo
-    const w_final_clamped = Math.min(Math.max(w_vis, 6), 40); 
-    const h_final_clamped = Math.min(Math.max(h_vis, 10), 80);
+    // --- 2. ESCALA PARA LA SECCIÓN A-A (VISTA INFERIOR) ---
+    // Usamos una escala independiente para que sea siempre legible y no desborde
+    // Queremos que quepa en un área de ~120x80px
+    const maxSectionDim = Math.max(h_nucleo_val, w_nucleo_val);
+    const pxPerMmSection = Math.min(Math.max(80 / (maxSectionDim || 1), 1.5), 8);
+    
+    const w_section_final = w_nucleo_val * pxPerMmSection;
+    const h_section_final = h_nucleo_val * pxPerMmSection;
 
     // Densidad visual
-    const realTurns = results.vueltas || 500;
+    const realTurns = (results && results.vueltas) ? results.vueltas : 500;
     // En modo realista dibujamos más lineas para textura
     const visualTurns = Math.min(realTurns, isBlueprint ? 180 : 360); 
 
     return {
       r_final: r_final_clamped,
-      w_visual: w_final_clamped,
-      h_visual: h_final_clamped,
+      w_coil: w_coil_final,
+      w_section: w_section_final,
+      h_section: h_section_final,
       d_real: d_real_val,
       numDispTurns: visualTurns
     };
@@ -138,28 +171,31 @@ const RogowskiVisualizer = ({ inputs, results, visualMode = 'blueprint' }) => {
       {/* Fondo Grilla (Solo Blueprint) */}
       {isBlueprint && <rect width="100%" height="100%" fill="url(#grid)" />}
 
-      {/* --- VISTA SUPERIOR (TOROIDE) --- */}
+      {/* --- DIVIDER LINE --- */}
+      <line x1="20" y1="320" x2={width-20} y2="320" stroke={colors.divider} strokeWidth="1" strokeDasharray="4 4" />
+
+      {/* --- VISTA SUPERIOR (TOROIDE) - ZONA SUPERIOR --- */}
       <g>
         {/* Núcleo (Base) */}
         <circle 
           cx={centerX} 
-          cy={centerY} 
+          cy={centerTopY} 
           r={r_final} 
           stroke={isBlueprint ? colors.stroke : "url(#coreRealGradient)"} 
           strokeOpacity={colors.coreStrokeOpacity}
           fill="none" 
-          strokeWidth={w_visual} 
+          strokeWidth={w_coil} 
           filter={!isBlueprint ? "drop-shadow(0 4px 6px rgba(0,0,0,0.5))" : ""}
         />
         
         {/* Bobinado */}
         <circle 
           cx={centerX} 
-          cy={centerY} 
+          cy={centerTopY} 
           r={r_final} 
           stroke={colors.coilStroke} 
           fill="none" 
-          strokeWidth={w_visual + (isBlueprint ? 4 : 2)} 
+          strokeWidth={w_coil + (isBlueprint ? 4 : 2)} 
           strokeDasharray={coilDashArray}
           opacity={colors.coilOpacity}
           style={{ mixBlendMode: isBlueprint ? 'normal' : 'lighten' }}
@@ -168,31 +204,33 @@ const RogowskiVisualizer = ({ inputs, results, visualMode = 'blueprint' }) => {
         {/* Cota Diámetro Exterior (Siempre visible, color adaptado) */}
         <g id="dim-diameter">
            <path 
-             d={`M ${centerX - r_final - w_visual/2 - 20} ${centerY} L ${centerX + r_final + w_visual/2 + 20} ${centerY}`} 
+             d={`M ${centerX - r_final - w_coil/2 - 20} ${centerTopY} L ${centerX + r_final + w_coil/2 + 20} ${centerTopY}`} 
              stroke={colors.dim} 
              strokeWidth="1"
              markerEnd="url(#arrow)"
              markerStart="url(#arrow-start)"
              opacity="0.7"
            />
-           <rect x={centerX - 40} y={centerY - 10} width="80" height="20" fill={isBlueprint ? colors.bg : '#000'} opacity="0.6"/>
-           <text x={centerX} y={centerY + 5} textAnchor="middle" fill={colors.dim} fontSize="14" fontWeight="bold" fontFamily="monospace">
+           <rect x={centerX - 40} y={centerTopY - 10} width="80" height="20" fill={isBlueprint ? colors.bg : '#000'} opacity="0.6"/>
+           <text x={centerX} y={centerTopY + 5} textAnchor="middle" fill={colors.dim} fontSize="14" fontWeight="bold" fontFamily="monospace">
              ∅ {d_real.toFixed(1)} mm
            </text>
         </g>
       </g>
 
 
-      {/* --- VISTA SECCIÓN TRANSVERSAL (Abajo a la izquierda) --- */}
-      <g transform={`translate(60, 380)`}>
-         <text x="0" y="-20" fill={colors.text} fontSize="14" fontWeight="bold" style={{textTransform: 'uppercase'}}>Sección A-A</text>
+      {/* --- ZONA INFERIOR --- */}
+      
+      {/* 1. SECCIÓN TRANSVERSAL (Abajo Izquierda) */}
+      <g transform={`translate(60, ${bottomSectionY})`}>
+         <text x="0" y="-15" fill={colors.text} fontSize="12" fontWeight="bold" style={{textTransform: 'uppercase'}}>SECCIÓN TÍPICA A-A</text>
          
          {/* Núcleo Rectangular */}
          <rect 
             x="0" 
             y="0" 
-            width={w_visual * 2} 
-            height={h_visual * 2} 
+            width={w_section} 
+            height={h_section} 
             fill={isBlueprint ? "url(#hatch)" : "url(#coreRealGradient)"} 
             stroke={isBlueprint ? colors.stroke : "#555"} 
             strokeWidth={isBlueprint ? 2 : 1} 
@@ -204,7 +242,7 @@ const RogowskiVisualizer = ({ inputs, results, visualMode = 'blueprint' }) => {
              <circle 
                 key={`wire-l-${i}`}
                 cx="-2" 
-                cy={(i * (h_visual * 2) / 7)} 
+                cy={(i * (h_section) / 7)} 
                 r={isBlueprint ? 3 : 2} 
                 fill={isBlueprint ? colors.bg : "#ffcfa3"} 
                 stroke={isBlueprint ? colors.stroke : "none"} 
@@ -215,8 +253,8 @@ const RogowskiVisualizer = ({ inputs, results, visualMode = 'blueprint' }) => {
          {Array.from({ length: 8 }).map((_, i) => (
              <circle 
                 key={`wire-r-${i}`}
-                cx={w_visual * 2 + 2}
-                cy={(i * (h_visual * 2) / 7)} 
+                cx={w_section + 2}
+                cy={(i * (h_section) / 7)} 
                 r={isBlueprint ? 3 : 2} 
                 fill={isBlueprint ? colors.bg : "#ffcfa3"} 
                 stroke={isBlueprint ? colors.stroke : "none"} 
@@ -227,31 +265,31 @@ const RogowskiVisualizer = ({ inputs, results, visualMode = 'blueprint' }) => {
          {/* Cotas Sección */}
          {/* Altura */}
          <path 
-             d={`M ${w_visual * 2 + 15} 0 L ${w_visual * 2 + 15} ${h_visual * 2}`} 
+             d={`M ${w_section + 15} 0 L ${w_section + 15} ${h_section}`} 
              stroke={colors.dim} 
              markerEnd="url(#arrow)" 
              markerStart="url(#arrow-start)"
              opacity="0.6"
          />
-         <text x={w_visual * 2 + 25} y={h_visual} fill={colors.dim} fontSize="12" dominantBaseline="middle">
+         <text x={w_section + 25} y={h_section / 2} fill={colors.dim} fontSize="12" dominantBaseline="middle">
             H: {inputs.altura_nucleo_mm}mm
          </text>
 
          {/* Ancho */}
          <path 
-             d={`M 0 ${h_visual * 2 + 15} L ${w_visual * 2} ${h_visual * 2 + 15}`} 
+             d={`M 0 ${h_section + 15} L ${w_section} ${h_section + 15}`} 
              stroke={colors.dim} 
              markerEnd="url(#arrow)" 
              markerStart="url(#arrow-start)"
              opacity="0.6"
          />
-         <text x={w_visual} y={h_visual * 2 + 30} fill={colors.dim} fontSize="12" textAnchor="middle">
+         <text x={w_section / 2} y={h_section + 30} fill={colors.dim} fontSize="12" textAnchor="middle">
             W: {inputs.espesor_nucleo_mm}mm
          </text>
       </g>
 
-      {/* --- INFO BOX (Derecha Abajo) --- */}
-      <g transform={`translate(${width - 220}, 380)`}>
+      {/* 2. INFO BOX (Abajo Derecha) */}
+      <g transform={`translate(${width - 230}, ${bottomSectionY})`}>
          <rect 
             width="200" 
             height="100" 

@@ -8,7 +8,13 @@ const RogowskiCalculator = ({ onClose }) => {
   const [visualMode, setVisualMode] = useState('blueprint');
 
   const handleInputChange = (field, value) => {
-    setInputs(prev => ({ ...prev, [field]: parseFloat(value) || 0 }));
+    // Si el valor es una cadena vacía, actualizamos el estado con una cadena vacía
+    if (value === "") {
+        setInputs(prev => ({ ...prev, [field]: "" }));
+        return;
+    }
+    // Si no, parseamos el valor. Si resulta NaN, usamos 0.
+    setInputs(prev => ({ ...prev, [field]: parseFloat(value) }));
   };
 
   return (
@@ -126,18 +132,18 @@ const RogowskiCalculator = ({ onClose }) => {
 
         {/* COLUMNA CENTRAL: VISUALIZADOR */}
         <div className="rogowski-panel center">
-           <div style={{ position: 'absolute', top: 20, zIndex: 10, display: 'flex', gap: 10 }}>
+           <div style={{ position: 'absolute', top: 20, right: 20, zIndex: 10, display: 'flex', gap: 8 }}>
               <button 
                 className={`toggle-btn ${visualMode === 'blueprint' ? 'active' : ''}`}
                 onClick={() => setVisualMode('blueprint')}
-                style={{ fontSize: '0.8rem', padding: '0.4rem 1rem', minWidth: 100 }}
+                style={{ fontSize: '0.7rem', padding: '0.3rem 0.8rem', minWidth: 80 }}
               >
                 📐 Técnico
               </button>
               <button 
                 className={`toggle-btn ${visualMode === 'realistic' ? 'active' : ''}`}
                 onClick={() => setVisualMode('realistic')}
-                style={{ fontSize: '0.8rem', padding: '0.4rem 1rem', minWidth: 100 }}
+                style={{ fontSize: '0.7rem', padding: '0.3rem 0.8rem', minWidth: 80 }}
               >
                 🎥 Realista
               </button>

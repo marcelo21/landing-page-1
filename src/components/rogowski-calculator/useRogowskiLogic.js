@@ -33,25 +33,35 @@ export const useRogowskiLogic = () => {
   const results = useMemo(() => {
     // Constantes Físicas
     const MU_0 = 4 * Math.PI * 1e-7;
-    const OMEGA = 2 * Math.PI * inputs.freq;
     const RHO_CU = 1.72e-8;
 
     // Conversión de unidades a SI (metros, voltios, amperios)
-    const v_out = inputs.v_out_target_mv / 1000.0;
-    const h_nucleo = inputs.altura_nucleo_mm / 1000.0;
-    const w_nucleo = inputs.espesor_nucleo_mm / 1000.0;
-    const diametro_hilo = inputs.diametro_hilo_mm / 1000.0;
+    // Nos aseguramos de tratar inputs vacios como 0 para el cálculo
+    const v_out_val = Number(inputs.v_out_target_mv) || 0;
+    const h_nucleo_val = Number(inputs.altura_nucleo_mm) || 0;
+    const w_nucleo_val = Number(inputs.espesor_nucleo_mm) || 0;
+    const diametro_hilo_val = Number(inputs.diametro_hilo_mm) || 0;
+    const i_rated_val = Number(inputs.i_rated) || 0;
+    const freq_val = Number(inputs.freq) || 0;
+    const d_bobina_input = Number(inputs.d_bobina_mm) || 0;
+    const longitud_tira_input = Number(inputs.longitud_tira_mm) || 0;
+
+    const v_out = v_out_val / 1000.0;
+    const h_nucleo = h_nucleo_val / 1000.0;
+    const w_nucleo = w_nucleo_val / 1000.0;
+    const diametro_hilo = diametro_hilo_val / 1000.0;
+    const OMEGA = 2 * Math.PI * freq_val;
 
     // Determinar Diametro de Bobina (D_bobina)
     let d_bobina = 0;
     if (inputMode === 'diametro') {
-        d_bobina = inputs.d_bobina_mm / 1000.0;
+        d_bobina = d_bobina_input / 1000.0;
     } else {
-        d_bobina = (inputs.longitud_tira_mm / Math.PI) / 1000.0;
+        d_bobina = (longitud_tira_input / Math.PI) / 1000.0;
     }
 
     // Validaciones basicas
-    if (d_bobina <= 0 || h_nucleo <= 0 || w_nucleo <= 0 || inputs.i_rated <= 0 || inputs.freq <= 0) {
+    if (d_bobina <= 0 || h_nucleo <= 0 || w_nucleo <= 0 || i_rated_val <= 0 || freq_val <= 0) {
         return {
             vueltas: 0,
             inductancia_mutua_nH: 0,
@@ -78,7 +88,7 @@ export const useRogowskiLogic = () => {
 
     // 2. Vueltas (Teóricas)
     // m_necesaria = V / (w * I)
-    const m_necesaria = v_out / (OMEGA * inputs.i_rated);
+    const m_necesaria = v_out / (OMEGA * i_rated_val);
     const term_ln = Math.log(r_ext / r_int);
     
     // N = (2 * pi * M) / (mu0 * h * ln(re/ri))
