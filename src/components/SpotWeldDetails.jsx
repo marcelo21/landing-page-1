@@ -44,7 +44,7 @@ const SpotWeldDetails = ({ onClose }) => {
     {
       icon: <RefreshCw size={24} />,
       title: "Retrofitting de Alto ROI y Monitoreo HMI",
-      desc: "Revitalice su maquinaria actual con tecnología de última generación y además con la posibilidad de integrar pantallas HMI, extendiendo su vida útil por una fracción de la inversión."
+      desc: "Revitalice su maquinaria actual con tecnología de última generación y además con la posibilidad de integrar pantallas HMI (ver simulador en sitio), extendiendo su vida útil por una fracción de la inversión."
     },
     {
       icon: <Grip size={24} />,
