@@ -5,15 +5,18 @@
  * @returns {JSX.Element} Sección con grid de servicios
  */
 import React, { useState } from 'react';
+import { ArrowRight } from 'lucide-react';
 import WeldCalculator from './weld-calculator/WeldCalculator';
 import RogowskiCalculator from './rogowski-calculator/RogowskiCalculator';
 import HMIMicroSimulator from './hmi-simulator/HMIMicroSimulator';
 import LoginModal from './LoginModal';
+import SpotWeldDetails from './SpotWeldDetails';
 
 const Services = () => {
   const [showCalculator, setShowCalculator] = useState(false);
   const [showRogowski, setShowRogowski] = useState(false);
   const [showHmi, setShowHmi] = useState(false);
+  const [showSpotWeld, setShowSpotWeld] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
@@ -37,7 +40,11 @@ const Services = () => {
   };
 
   const handleHmiClick = () => {
-     setShowHmi(true);
+    setShowHmi(true);
+  };
+
+  const handleSpotWeldClick = () => {
+    setShowSpotWeld(true);
   };
 
   const handleLoginSuccess = () => {
@@ -65,7 +72,8 @@ const Services = () => {
     {
       icon: "⚡",
       title: "Soldadura por Puntos",
-      desc: "Especialistas en sistemas de soldadura para la industria automotriz, garantizando uniones perfectas."
+      desc: "Especialistas en sistemas de soldadura para la industria automotriz, garantizando uniones perfectas.",
+      action: handleSpotWeldClick
     },
     {
       icon: "🧮",
@@ -111,11 +119,17 @@ const Services = () => {
               key={index} 
               className={`card ${service.action ? 'interactive-card' : ''}`}
               onClick={service.action}
-              style={service.action ? { cursor: 'pointer', border: '1px solid #7aa2f7' } : {}}
             >
               <span className="card-icon">{service.icon}</span>
               <h3>{service.title}</h3>
               <p>{service.desc}</p>
+              
+              {service.action && (
+                <div className="card-cta">
+                  <span>Ver detalles</span>
+                  <ArrowRight size={16} />
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -136,6 +150,10 @@ const Services = () => {
 
       {showRogowski && (
         <RogowskiCalculator onClose={() => setShowRogowski(false)} />
+      )}
+
+      {showSpotWeld && (
+        <SpotWeldDetails onClose={() => setShowSpotWeld(false)} />
       )}
 
       {showHmi && (

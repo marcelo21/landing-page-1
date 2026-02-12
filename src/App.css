@@ -161,12 +161,50 @@ p.section-desc {
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  transition: transform 0.3s, background-color 0.3s;
+  transition: all 0.3s ease;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
 }
 
-.card:hover {
-  transform: translateY(-5px);
+.interactive-card {
+  cursor: pointer;
+}
+
+.interactive-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+  border-color: var(--primary-color);
+}
+
+.card-cta {
+  margin-top: auto;
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-color);
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.interactive-card:hover .card-cta {
+  opacity: 1;
+  color: var(--primary-color);
+}
+
+.interactive-card:hover .card-cta svg {
+  transform: translateX(5px);
+}
+
+.card-cta svg {
+  transition: transform 0.3s ease;
 }
 
 .card-icon {

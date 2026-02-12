@@ -1,0 +1,144 @@
+.spot-weld-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.spot-weld-modal {
+  background: var(--bg-surface);
+  color: var(--text-color);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  animation: fadeIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.spot-weld-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+  background-color: var(--bg-surface);
+  flex-shrink: 0;
+}
+
+.spot-weld-header h2 {
+  color: var(--primary-color);
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-color);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background-color: rgba(128, 128, 128, 0.1);
+}
+
+.spot-weld-content {
+  padding: 24px;
+  background-color: var(--bg-surface);
+  overflow-y: auto;
+}
+
+/* Scrollbar Styling */
+.spot-weld-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.spot-weld-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.spot-weld-content::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.3);
+  border-radius: 4px;
+}
+
+.spot-weld-content::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.benefit-item:hover {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+.benefit-icon {
+  color: var(--primary-color);
+  flex-shrink: 0;
+  margin-top: 2px;
+  background: rgba(245, 130, 32, 0.1);
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.benefit-text h3 {
+  font-size: 1.1rem;
+  margin: 0 0 4px 0;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.benefit-text p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.85;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Dark mode specific adjustments if needed */
+[data-theme='dark'] .spot-weld-modal {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
