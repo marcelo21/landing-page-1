@@ -80,11 +80,13 @@ export const useWeldLogic = () => {
         nugget2Min = 5 * Math.sqrt(Math.min(thicknesses[1], thicknesses[2]));
       }
 
+      // Modificar electrode: si son 2 espesores usar espesor menor, si son 3 usar el promedio
+      const t_electrode = activeThicknesses.length >= 3 ? t_ref : t_min;
       extraInfo = {
         nuggetMin: nugget1Min,
         nugget1Min,
         nugget2Min,
-        electrode: 2 * t_max + 3,
+        electrode: 2 * t_electrode + 3,
         t_ref
       };
 
