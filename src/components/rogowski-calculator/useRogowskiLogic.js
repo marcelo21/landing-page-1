@@ -7,7 +7,9 @@ import { useState, useMemo, useEffect } from 'react';
  */
 export const useRogowskiLogic = () => {
   // Modo de entrada: 'diametro' (D) o 'longitud' (L_tira)
-  const [inputMode, setInputMode] = useState('diametro'); 
+  const [inputMode, setInputMode] = useState('diametro');
+  // Tipo de sección transversal: 'rectangular' o 'circular'
+  const [sectionType, setSectionType] = useState('rectangular');
 
   const [inputs, setInputs] = useState({
     v_out_target_mv: 142.0,
@@ -16,18 +18,20 @@ export const useRogowskiLogic = () => {
     // Geometría del Transformador
     d_bobina_mm: 181.43,    // Diametro toroide
     longitud_tira_mm: 570.0,  // O largo de la tira
-    // Geometría del Núcleo
+    // Geometría del Núcleo (Rectangular)
     altura_nucleo_mm: 20.0,
     espesor_nucleo_mm: 6.0,
+    // Geometría del Núcleo (Circular)
+    radio_seccion_mm: 5.0,   // Radio de la sección transversal circular
     diametro_hilo_mm: 0.203 // AWG 32
   });
-  
+
   // Efecto para sincronizar diameter y length al cambiar de modo
   useEffect(() => {
-     if (inputMode === 'diametro') {
-         // Si cambiamos a diametro, recalculamos la longitud basada en dia anterior
-         // (Opcional, pero aqui mantendremos los valores individuales)
-     }
+    if (inputMode === 'diametro') {
+      // Si cambiamos a diametro, recalculamos la longitud basada en dia anterior
+      // (Opcional, pero aqui mantendremos los valores individuales)
+    }
   }, [inputMode]);
 
   const results = useMemo(() => {
@@ -55,53 +59,73 @@ export const useRogowskiLogic = () => {
     // Determinar Diametro de Bobina (D_bobina)
     let d_bobina = 0;
     if (inputMode === 'diametro') {
-        d_bobina = d_bobina_input / 1000.0;
+      d_bobina = d_bobina_input / 1000.0;
     } else {
-        d_bobina = (longitud_tira_input / Math.PI) / 1000.0;
+      d_bobina = (longitud_tira_input / Math.PI) / 1000.0;
     }
 
     // Validaciones basicas
     if (d_bobina <= 0 || h_nucleo <= 0 || w_nucleo <= 0 || i_rated_val <= 0 || freq_val <= 0) {
-        return {
-            vueltas: 0,
-            inductancia_mutua_nH: 0,
-            factor_llenado: 0,
-            resistencia_ohm: 0,
-            longitud_hilo_m: 0,
-            es_viable: false,
-            paso_mm: 0,
-            gap_mm: 0,
-            d_int_mm: 0,
-            d_ext_mm: 0,
-            error: "Parámetros inválidos"
-        };
+      return {
+        vueltas: 0,
+        inductancia_mutua_nH: 0,
+        factor_llenado: 0,
+        resistencia_ohm: 0,
+        longitud_hilo_m: 0,
+        es_viable: false,
+        paso_mm: 0,
+        gap_mm: 0,
+        d_int_mm: 0,
+        d_ext_mm: 0,
+        error: "Parámetros inválidos"
+      };
     }
 
-    // 1. Geometría
+    // 1. Geometría — depende de la sección transversal
     const r_medio = d_bobina / 2;
-    const r_int = r_medio - (w_nucleo / 2);
-    const r_ext = r_medio + (w_nucleo / 2);
+    const a_seccion = (Number(inputs.radio_seccion_mm) || 0) / 1000.0; // radio sección circular
 
-    if (w_nucleo >= d_bobina) {
-         return { error: "El espesor del núcleo es demasiado grande para el diámetro.", es_viable: false };
+    let r_int, r_ext;
+    if (sectionType === 'rectangular') {
+      r_int = r_medio - (w_nucleo / 2);
+      r_ext = r_medio + (w_nucleo / 2);
+      if (w_nucleo >= d_bobina) {
+        return { error: "El espesor del núcleo es demasiado grande para el diámetro.", es_viable: false, sectionType };
+      }
+    } else {
+      // Circular: el diámetro de la sección reemplaza al espesor
+      r_int = r_medio - a_seccion;
+      r_ext = r_medio + a_seccion;
+      if (a_seccion >= r_medio || a_seccion <= 0) {
+        return { error: "El radio de sección es inválido para el toroide.", es_viable: false, sectionType };
+      }
     }
 
-    // 2. Vueltas (Teóricas)
-    // m_necesaria = V / (w * I)
+    // 2. Inductancia Mutua necesaria
     const m_necesaria = v_out / (OMEGA * i_rated_val);
-    const term_ln = Math.log(r_ext / r_int);
-    
-    // N = (2 * pi * M) / (mu0 * h * ln(re/ri))
-    let n_vueltas = (2 * Math.PI * m_necesaria) / (MU_0 * h_nucleo * term_ln);
+
+    // 3. Vueltas (N) — fórmula distinta según sección
+    let n_vueltas;
+    if (sectionType === 'rectangular') {
+      const term_ln = Math.log(r_ext / r_int);
+      // N = (2π · M) / (μ₀ · h · ln(r_ext/r_int))
+      n_vueltas = (2 * Math.PI * m_necesaria) / (MU_0 * h_nucleo * term_ln);
+    } else {
+      // Circular: M = N · μ₀ · (R - √(R² - a²))
+      // N = M / (μ₀ · (R - √(R² - a²)))
+      const R = r_medio;
+      const termCircular = R - Math.sqrt(R * R - a_seccion * a_seccion);
+      n_vueltas = m_necesaria / (MU_0 * termCircular);
+    }
     n_vueltas = Math.round(n_vueltas);
 
-    // 3. Viabilidad
+    // 4. Viabilidad (factor de llenado)
     const perimetro_interno_toroide = 2 * Math.PI * r_int;
     const longitud_ocupada_cobre = n_vueltas * diametro_hilo;
 
     let factor_llenado = 0;
     if (perimetro_interno_toroide > 0) {
-        factor_llenado = (longitud_ocupada_cobre / perimetro_interno_toroide) * 100;
+      factor_llenado = (longitud_ocupada_cobre / perimetro_interno_toroide) * 100;
     }
 
     const es_viable = longitud_ocupada_cobre <= perimetro_interno_toroide;
@@ -109,31 +133,36 @@ export const useRogowskiLogic = () => {
     // --- CÁLCULOS MECÁNICOS ---
     const longitud_tira_nucleo = Math.PI * d_bobina;
     const FACTOR_DOBLADO_MANUAL = 1.05;
-    const perimetro_seccion_nucleo = 2 * (h_nucleo + w_nucleo);
+
+    // Perímetro de la sección del núcleo según tipo
+    const perimetro_seccion_nucleo = sectionType === 'rectangular'
+      ? 2 * (h_nucleo + w_nucleo)
+      : 2 * Math.PI * a_seccion;
 
     const longitud_bobinado = n_vueltas * perimetro_seccion_nucleo * FACTOR_DOBLADO_MANUAL;
     const longitud_retorno = longitud_tira_nucleo;
-    
+
     const longitud_total_hilo = longitud_bobinado + longitud_retorno;
 
     // Resistencia
     const area_seccion_hilo = Math.PI * Math.pow((diametro_hilo / 2), 2);
     let resistencia = 0;
     if (area_seccion_hilo > 0) {
-        resistencia = (RHO_CU * longitud_total_hilo) / area_seccion_hilo;
+      resistencia = (RHO_CU * longitud_total_hilo) / area_seccion_hilo;
     }
 
-    // 4. Paso y Gap
+    // 5. Paso y Gap
     const perimetro_interno_real = 2 * Math.PI * r_int;
     let paso_mm = 0;
     let gap_mm = 0;
-    
+
     if (n_vueltas > 0) {
-        paso_mm = (perimetro_interno_real * 1000) / n_vueltas;
-        gap_mm = paso_mm - (diametro_hilo * 1000);
+      paso_mm = (perimetro_interno_real * 1000) / n_vueltas;
+      gap_mm = paso_mm - (diametro_hilo * 1000);
     }
-    
+
     return {
+      sectionType,
       vueltas: n_vueltas,
       inductancia_mutua_nH: m_necesaria * 1e9,
       d_int_mm: r_int * 2 * 1000,
@@ -147,12 +176,14 @@ export const useRogowskiLogic = () => {
       gap_sugerido_mm: gap_mm,
       error: null
     };
-  }, [inputs, inputMode]);
+  }, [inputs, inputMode, sectionType]);
 
   return {
-    inputMode, 
+    inputMode,
     setInputMode,
-    inputs, 
+    sectionType,
+    setSectionType,
+    inputs,
     setInputs,
     results
   };
