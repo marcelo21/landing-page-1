@@ -1,0 +1,44 @@
+.features {
+    padding: var(--padding-section);
+}
+
+.featureItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.featureText {
+    flex: 1;
+    padding: 20px;
+}
+
+.featureImage {
+    flex: 1;
+    background-color: #ddd;
+    height: 300px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    color: #aaa;
+}
+
+@media (max-width: 768px) {
+    .featureItem {
+        flex-direction: column;
+    }
+
+    /* Forzar que las imágenes en mobile también se vean bien */
+    .featureItem .featureImage {
+        min-height: 250px;
+        height: auto;
+    }
+
+    /* Asegurar que el segundo feature-item también sea columna */
+    .featureItem[style*="row-reverse"] {
+        flex-direction: column !important;
+    }
+}

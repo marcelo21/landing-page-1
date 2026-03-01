@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './LoginModal.css';
+import styles from './LoginModal.module.css';
 
 /**
  * LoginModal
@@ -26,23 +26,23 @@ const LoginModal = ({ onLogin, onClose, appName = 'WeldMaster PRO', appIcon = 'ð
   };
 
   return (
-    <div className="login-overlay">
-      <div className="login-container">
-        <button className="close-login" onClick={onClose}>&times;</button>
-        
-        <div className="login-header">
-          <div className="login-app-icon">{appIcon}</div>
+    <div className={styles['login-overlay']}>
+      <div className={styles['login-container']}>
+        <button className={styles['close-login']} onClick={onClose}>&times;</button>
+
+        <div className={styles['login-header']}>
+          <div className={styles['login-app-icon']}>{appIcon}</div>
           <h2>Acceso Restringido</h2>
           <p>Ingrese sus credenciales para acceder a <strong>{appName}</strong></p>
         </div>
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="form-group">
+        <form className={styles['login-form']} onSubmit={handleSubmit}>
+          <div className={styles['form-group']}>
             <label htmlFor="username">Usuario</label>
             <input
               type="text"
               id="username"
-              className="login-input"
+              className={styles['login-input']}
               value={username}
               onChange={(e) => {
                 setUsername(e.target.value);
@@ -53,13 +53,13 @@ const LoginModal = ({ onLogin, onClose, appName = 'WeldMaster PRO', appIcon = 'ð
             />
           </div>
 
-          <div className="form-group">
+          <div className={styles['form-group']}>
             <label htmlFor="password">ContraseÃ±a</label>
-            <div className="input-wrapper">
+            <div className={styles['input-wrapper']}>
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                className="login-input"
+                className={styles['login-input']}
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -67,9 +67,9 @@ const LoginModal = ({ onLogin, onClose, appName = 'WeldMaster PRO', appIcon = 'ð
                 }}
                 placeholder="Ingrese su contraseÃ±a"
               />
-              <button 
-                type="button" 
-                className="toggle-password"
+              <button
+                type="button"
+                className={styles['toggle-password']}
                 onClick={() => setShowPassword(!showPassword)}
                 title={showPassword ? "Ocultar contraseÃ±a" : "Mostrar contraseÃ±a"}
               >
@@ -78,9 +78,9 @@ const LoginModal = ({ onLogin, onClose, appName = 'WeldMaster PRO', appIcon = 'ð
             </div>
           </div>
 
-          {error && <div className="error-message">{error}</div>}
+          {error && <div className={styles['error-message']}>{error}</div>}
 
-          <button type="submit" className="login-btn">
+          <button type="submit" className={styles['login-btn']}>
             Ingresar
           </button>
         </form>

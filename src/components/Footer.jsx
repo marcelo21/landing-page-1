@@ -4,10 +4,11 @@
  * @returns {JSX.Element} Sección footer con datos de la empresa
  */
 import React from 'react';
+import styles from './Footer.module.css';
 
 const Footer = () => {
   return (
-    <footer className="footer">
+    <footer className={styles.footer}>
       <div className="container">
         <h3>FEMAS Tecnología Industrial</h3>
         <p>Córdoba, Argentina</p>

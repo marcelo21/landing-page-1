@@ -5,6 +5,7 @@
  * @returns {JSX.Element} Botón con ícono de sol/luna
  */
 import React, { useState, useEffect } from 'react';
+import styles from './ThemeToggle.module.css';
 
 const ThemeToggle = () => {
   const [theme, setTheme] = useState('light');
@@ -29,17 +30,17 @@ const ThemeToggle = () => {
   };
 
   return (
-    <button 
-      onClick={toggleTheme} 
-      className="theme-toggle-btn"
+    <button
+      onClick={toggleTheme}
+      className={styles.themeToggleBtn}
       aria-label="Cambiar tema"
       title={theme === 'light' ? 'Activar modo oscuro' : 'Activar modo claro'}
     >
-      <img 
-        src={theme === 'light' ? '/moon-svgrepo-com.svg' : '/sun-svgrepo-com.svg'} 
-        alt={theme === 'light' ? 'Modo Oscuro' : 'Modo Claro'} 
-        width="24" 
-        height="24" 
+      <img
+        src={theme === 'light' ? '/moon-svgrepo-com.svg' : '/sun-svgrepo-com.svg'}
+        alt={theme === 'light' ? 'Modo Oscuro' : 'Modo Claro'}
+        width="24"
+        height="24"
       />
     </button>
   );

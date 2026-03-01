@@ -26,6 +26,7 @@ npm run dev
     - `weld-calculator/` - Módulo de la calculadora WeldMaster PRO
   - `App.jsx` - Componente raíz
   - `App.css` - Estilos globales
+- `docs/` - Documentación técnica y guía de estilos
 
 ## Git
 

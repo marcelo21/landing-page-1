@@ -11,6 +11,7 @@ import RogowskiCalculator from './rogowski-calculator/RogowskiCalculator';
 import HMIMicroSimulator from './hmi-simulator/HMIMicroSimulator';
 import LoginModal from './LoginModal';
 import SpotWeldDetails from './SpotWeldDetails';
+import styles from './Services.module.css';
 
 const Services = () => {
   const [showCalculator, setShowCalculator] = useState(false);
@@ -50,7 +51,7 @@ const Services = () => {
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
     setShowLogin(false);
-    
+
     if (pendingAction === 'rogowski') {
       setShowRogowski(true);
     } else if (pendingAction === 'weld') {
@@ -60,7 +61,7 @@ const Services = () => {
   };
 
   // Determinar datos para el login modal
-  const loginAppData = pendingAction === 'rogowski' 
+  const loginAppData = pendingAction === 'rogowski'
     ? { name: 'Rogowski Calculator', icon: '⚙️' }
     : { name: 'WeldMaster PRO', icon: '🧮' };
 
@@ -106,26 +107,26 @@ const Services = () => {
   ];
 
   return (
-    <section id="servicios" className="services">
+    <section id="servicios" className={styles.services}>
       <div className="container">
         <h2>Nuestras Soluciones</h2>
         <p className="section-desc">
           Tecnología de punta aplicada a resolver los desafíos más complejos de la industria manufacturera.
         </p>
-        
-        <div className="grid-container">
+
+        <div className={styles.gridContainer}>
           {servicesList.map((service, index) => (
-            <div 
-              key={index} 
-              className={`card ${service.action ? 'interactive-card' : ''}`}
+            <div
+              key={index}
+              className={`${styles.card} ${service.action ? styles.interactiveCard : ''}`}
               onClick={service.action}
             >
-              <span className="card-icon">{service.icon}</span>
+              <span className={styles.cardIcon}>{service.icon}</span>
               <h3>{service.title}</h3>
               <p>{service.desc}</p>
-              
+
               {service.action && (
-                <div className="card-cta">
+                <div className={styles.cardCta}>
                   <span>Ver detalles</span>
                   <ArrowRight size={16} />
                 </div>
@@ -134,16 +135,16 @@ const Services = () => {
           ))}
         </div>
       </div>
-      
+
       {showLogin && (
-        <LoginModal 
-          onLogin={handleLoginSuccess} 
-          onClose={() => setShowLogin(false)} 
+        <LoginModal
+          onLogin={handleLoginSuccess}
+          onClose={() => setShowLogin(false)}
           appName={loginAppData.name}
           appIcon={loginAppData.icon}
         />
       )}
-      
+
       {showCalculator && (
         <WeldCalculator onClose={() => setShowCalculator(false)} />
       )}

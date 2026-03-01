@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, Wrench, ShieldCheck, Award, Microscope, RefreshCw, Zap, PencilRuler, Target, Grip } from 'lucide-react';
-import './SpotWeldDetails.css';
+import styles from './SpotWeldDetails.module.css';
 
 /**
  * Componente SpotWeldDetails
@@ -9,7 +9,7 @@ import './SpotWeldDetails.css';
  * @param {Function} props.onClose - Función para cerrar el modal
  */
 const SpotWeldDetails = ({ onClose }) => {
-  
+
   const benefits = [
     {
       icon: <PencilRuler size={24} />,
@@ -59,23 +59,23 @@ const SpotWeldDetails = ({ onClose }) => {
   ];
 
   return (
-    <div className="spot-weld-overlay" onClick={onClose}>
-      <div className="spot-weld-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="spot-weld-header">
+    <div className={styles['spot-weld-overlay']} onClick={onClose}>
+      <div className={styles['spot-weld-modal']} onClick={(e) => e.stopPropagation()}>
+        <div className={styles['spot-weld-header']}>
           <h2>Servicios Integrales de Soldadura</h2>
-          <button className="close-btn" onClick={onClose} aria-label="Cerrar">
+          <button className={styles['close-btn']} onClick={onClose} aria-label="Cerrar">
             <X size={24} />
           </button>
         </div>
-        
-        <div className="spot-weld-content">
-          <div className="benefits-list">
+
+        <div className={styles['spot-weld-content']}>
+          <div className={styles['benefits-list']}>
             {benefits.map((item, index) => (
-              <div key={index} className="benefit-item">
-                <div className="benefit-icon">
+              <div key={index} className={styles['benefit-item']}>
+                <div className={styles['benefit-icon']}>
                   {item.icon}
                 </div>
-                <div className="benefit-text">
+                <div className={styles['benefit-text']}>
                   <h3>{item.title}</h3>
                   <p>{item.desc}</p>
                 </div>

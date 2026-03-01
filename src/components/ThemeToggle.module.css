@@ -1,0 +1,15 @@
+.themeToggleBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 20px;
+    transition: transform 0.3s;
+}
+
+.themeToggleBtn:hover {
+    transform: scale(1.1);
+}
