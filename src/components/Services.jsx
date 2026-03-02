@@ -9,6 +9,7 @@ import { ArrowRight } from 'lucide-react';
 import WeldCalculator from './weld-calculator/WeldCalculator';
 import RogowskiCalculator from './rogowski-calculator/RogowskiCalculator';
 import HMIMicroSimulator from './hmi-simulator/HMIMicroSimulator';
+import SpotStrengthCalculator from './spot-strength-calculator/SpotStrengthCalculator';
 import LoginModal from './LoginModal';
 import SpotWeldDetails from './SpotWeldDetails';
 import styles from './Services.module.css';
@@ -18,6 +19,7 @@ const Services = () => {
   const [showRogowski, setShowRogowski] = useState(false);
   const [showHmi, setShowHmi] = useState(false);
   const [showSpotWeld, setShowSpotWeld] = useState(false);
+  const [showSpotStrength, setShowSpotStrength] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
@@ -46,6 +48,10 @@ const Services = () => {
 
   const handleSpotWeldClick = () => {
     setShowSpotWeld(true);
+  };
+
+  const handleSpotStrengthClick = () => {
+    setShowSpotStrength(true);
   };
 
   const handleLoginSuccess = () => {
@@ -96,7 +102,8 @@ const Services = () => {
     {
       icon: "🔬",
       title: "Ensayos y Validación",
-      desc: "Ensayos destructivos y no destructivos (NDT) para asegurar la calidad y validación de procesos."
+      desc: "Ensayos destructivos y no destructivos (NDT) para asegurar la calidad y validación de procesos.",
+      action: handleSpotStrengthClick
     },
     {
       icon: "⚙️",
@@ -155,6 +162,10 @@ const Services = () => {
 
       {showSpotWeld && (
         <SpotWeldDetails onClose={() => setShowSpotWeld(false)} />
+      )}
+
+      {showSpotStrength && (
+        <SpotStrengthCalculator onClose={() => setShowSpotStrength(false)} />
       )}
 
       {showHmi && (
