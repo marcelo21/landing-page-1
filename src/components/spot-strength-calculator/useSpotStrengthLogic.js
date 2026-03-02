@@ -36,6 +36,10 @@ export const useSpotStrengthLogic = () => {
     const [etaPeel, setEtaPeel] = useState(0.50);              // η_p  (0.2–0.5)
     const [etaProcess, setEtaProcess] = useState(0.90);        // η_proc (0.8–0.95)
 
+    // Flags para habilitar factores opcionales (Desalingeación y Peel)
+    const [useEtaAlignment, setUseEtaAlignment] = useState(false);
+    const [useEtaPeel, setUseEtaPeel] = useState(false);
+
     // Toggle para mostrar/ocultar factores correctivos
     const [showFactors, setShowFactors] = useState(false);
 
@@ -81,8 +85,11 @@ export const useSpotStrengthLogic = () => {
         // ── Múltiples planos ──
         const F_total = F_base * n;
 
-        // ── Factores correctivos ──
-        const eta_product = etaQuality * etaAlignment * etaPeel * etaProcess;
+        // ── Factores correctivos (η) ──
+        const effEtaAlignment = useEtaAlignment ? etaAlignment : 1.0;
+        const effEtaPeel = useEtaPeel ? etaPeel : 1.0;
+
+        const eta_product = etaQuality * etaProcess * effEtaAlignment * effEtaPeel;
         const F_real = F_total * eta_product;
 
         // ── Criterios de aceptación / rechazo ──
@@ -137,6 +144,8 @@ export const useSpotStrengthLogic = () => {
         etaAlignment, setEtaAlignment,
         etaPeel, setEtaPeel,
         etaProcess, setEtaProcess,
+        useEtaAlignment, setUseEtaAlignment,
+        useEtaPeel, setUseEtaPeel,
         showFactors, setShowFactors,
         results,
         MATERIALS,

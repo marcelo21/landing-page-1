@@ -21,6 +21,8 @@ const SpotStrengthCalculator = ({ onClose }) => {
         etaAlignment, setEtaAlignment,
         etaPeel, setEtaPeel,
         etaProcess, setEtaProcess,
+        useEtaAlignment, setUseEtaAlignment,
+        useEtaPeel, setUseEtaPeel,
         showFactors, setShowFactors,
         results,
         MATERIALS,
@@ -130,10 +132,10 @@ const SpotStrengthCalculator = ({ onClose }) => {
                     </button>
 
                     <div className={`ssc-factors-body ${showFactors ? 'open' : ''}`}>
-                        {/* η_c — Calidad */}
+                        {/* 1. η_c — Calidad */}
                         <div className="ssc-factor-item">
                             <label>
-                                η Calidad Botón <span>{etaQuality.toFixed(2)}</span>
+                                1. η Calidad Botón <span>{etaQuality.toFixed(2)}</span>
                             </label>
                             <input
                                 type="range"
@@ -144,38 +146,10 @@ const SpotStrengthCalculator = ({ onClose }) => {
                             />
                         </div>
 
-                        {/* η_a — Desalineación */}
+                        {/* 2. η_proc — Proceso */}
                         <div className="ssc-factor-item">
                             <label>
-                                η Desalineación <span>{etaAlignment.toFixed(2)}</span>
-                            </label>
-                            <input
-                                type="range"
-                                className="ssc-slider"
-                                min="0.80" max="1.00" step="0.01"
-                                value={etaAlignment}
-                                onChange={(e) => setEtaAlignment(parseFloat(e.target.value))}
-                            />
-                        </div>
-
-                        {/* η_p — Peel */}
-                        <div className="ssc-factor-item">
-                            <label>
-                                η Modo Peel <span>{etaPeel.toFixed(2)}</span>
-                            </label>
-                            <input
-                                type="range"
-                                className="ssc-slider"
-                                min="0.20" max="0.50" step="0.01"
-                                value={etaPeel}
-                                onChange={(e) => setEtaPeel(parseFloat(e.target.value))}
-                            />
-                        </div>
-
-                        {/* η_proc — Proceso */}
-                        <div className="ssc-factor-item">
-                            <label>
-                                η Proceso <span>{etaProcess.toFixed(2)}</span>
+                                2. η Proceso <span>{etaProcess.toFixed(2)}</span>
                             </label>
                             <input
                                 type="range"
@@ -183,6 +157,48 @@ const SpotStrengthCalculator = ({ onClose }) => {
                                 min="0.80" max="0.95" step="0.01"
                                 value={etaProcess}
                                 onChange={(e) => setEtaProcess(parseFloat(e.target.value))}
+                            />
+                        </div>
+
+                        {/* 3. η_a — Desalineación (Opcional) */}
+                        <div className="ssc-factor-item">
+                            <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={useEtaAlignment}
+                                    onChange={(e) => setUseEtaAlignment(e.target.checked)}
+                                />
+                                3. η Desalineación <span>{useEtaAlignment ? etaAlignment.toFixed(2) : '(Off)'}</span>
+                            </label>
+                            <input
+                                type="range"
+                                className="ssc-slider"
+                                min="0.80" max="1.00" step="0.01"
+                                value={etaAlignment}
+                                onChange={(e) => setEtaAlignment(parseFloat(e.target.value))}
+                                disabled={!useEtaAlignment}
+                                style={{ opacity: useEtaAlignment ? 1 : 0.4 }}
+                            />
+                        </div>
+
+                        {/* 4. η_p — Modo Peel (Opcional) */}
+                        <div className="ssc-factor-item">
+                            <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={useEtaPeel}
+                                    onChange={(e) => setUseEtaPeel(e.target.checked)}
+                                />
+                                4. η Modo Peel <span>{useEtaPeel ? etaPeel.toFixed(2) : '(Off)'}</span>
+                            </label>
+                            <input
+                                type="range"
+                                className="ssc-slider"
+                                min="0.20" max="0.50" step="0.01"
+                                value={etaPeel}
+                                onChange={(e) => setEtaPeel(parseFloat(e.target.value))}
+                                disabled={!useEtaPeel}
+                                style={{ opacity: useEtaPeel ? 1 : 0.4 }}
                             />
                         </div>
 
