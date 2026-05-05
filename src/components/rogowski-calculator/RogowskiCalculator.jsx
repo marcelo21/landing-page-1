@@ -44,7 +44,7 @@ const RogowskiCalculator = ({ onClose }) => {
           </div>
 
           <div className="control-group">
-            <label>Voltaje Objetivo (mV)</label>
+            <label>Voltaje de Referencia (mV)</label>
             <input
               className="rogowski-input"
               type="number"
@@ -54,7 +54,7 @@ const RogowskiCalculator = ({ onClose }) => {
           </div>
 
           <div className="control-group">
-            <label>Corriente Nominal (A)</label>
+            <label>Corriente de Referencia (A)</label>
             <input
               className="rogowski-input"
               type="number"
