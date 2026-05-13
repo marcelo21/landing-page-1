@@ -4,7 +4,7 @@ import RogowskiVisualizer from './RogowskiVisualizer';
 import './RogowskiCalculator.css';
 
 const RogowskiCalculator = ({ onClose }) => {
-  const { inputMode, setInputMode, sectionType, setSectionType, inputs, setInputs, results } = useRogowskiLogic();
+  const { inputMode, setInputMode, sectionType, setSectionType, sensitivityMode, setSensitivityMode, inputs, setInputs, results } = useRogowskiLogic();
   const [visualMode, setVisualMode] = useState('blueprint');
 
   const handleInputChange = (field, value) => {
@@ -43,25 +43,52 @@ const RogowskiCalculator = ({ onClose }) => {
             >Largo Tira</button>
           </div>
 
-          <div className="control-group">
-            <label>Voltaje de Referencia (mV)</label>
-            <input
-              className="rogowski-input"
-              type="number"
-              value={inputs.v_out_target_mv}
-              onChange={(e) => handleInputChange('v_out_target_mv', e.target.value)}
-            />
+          <h3 className="panel-title" style={{ marginTop: '2rem' }}>Parámetros Eléctricos</h3>
+          <div className="toggle-group main-toggle">
+            <button
+              className={`toggle-btn ${sensitivityMode === 'voltage_current' ? 'active' : ''}`}
+              onClick={() => setSensitivityMode('voltage_current')}
+            >Voltaje/Corriente</button>
+            <button
+              className={`toggle-btn ${sensitivityMode === 'sensitivity' ? 'active' : ''}`}
+              onClick={() => setSensitivityMode('sensitivity')}
+            >Sensibilidad Directa</button>
           </div>
 
-          <div className="control-group">
-            <label>Corriente de Referencia (A)</label>
-            <input
-              className="rogowski-input"
-              type="number"
-              value={inputs.i_rated}
-              onChange={(e) => handleInputChange('i_rated', e.target.value)}
-            />
-          </div>
+          {sensitivityMode === 'voltage_current' ? (
+            <>
+              <div className="control-group">
+                <label>Voltaje de Referencia (mV)</label>
+                <input
+                  className="rogowski-input"
+                  type="number"
+                  value={inputs.v_out_target_mv}
+                  onChange={(e) => handleInputChange('v_out_target_mv', e.target.value)}
+                />
+              </div>
+
+              <div className="control-group">
+                <label>Corriente de Referencia (A)</label>
+                <input
+                  className="rogowski-input"
+                  type="number"
+                  value={inputs.i_rated}
+                  onChange={(e) => handleInputChange('i_rated', e.target.value)}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="control-group">
+              <label>Sensibilidad (mV/A)</label>
+              <input
+                className="rogowski-input"
+                type="number"
+                step="0.001"
+                value={inputs.sensitivity_mv_a !== undefined ? inputs.sensitivity_mv_a : ''}
+                onChange={(e) => handleInputChange('sensitivity_mv_a', e.target.value)}
+              />
+            </div>
+          )}
 
           <div className="control-group">
             <label>Frecuencia (Hz)</label>

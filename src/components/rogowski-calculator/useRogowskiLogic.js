@@ -10,10 +10,13 @@ export const useRogowskiLogic = () => {
   const [inputMode, setInputMode] = useState('diametro');
   // Tipo de sección transversal: 'rectangular' o 'circular'
   const [sectionType, setSectionType] = useState('rectangular');
+  // Modo de sensibilidad: 'voltage_current' o 'sensitivity'
+  const [sensitivityMode, setSensitivityMode] = useState('voltage_current');
 
   const [inputs, setInputs] = useState({
     v_out_target_mv: 142.0,
     i_rated: 1000,
+    sensitivity_mv_a: 0.142,
     freq: 60,
     // Geometría del Transformador
     d_bobina_mm: 181.43,    // Diametro toroide
@@ -102,7 +105,13 @@ export const useRogowskiLogic = () => {
     }
 
     // 2. Inductancia Mutua necesaria
-    const m_necesaria = v_out / (OMEGA * i_rated_val);
+    let m_necesaria = 0;
+    if (sensitivityMode === 'voltage_current') {
+      m_necesaria = v_out / (OMEGA * i_rated_val);
+    } else {
+      const sensitivity_val = Number(inputs.sensitivity_mv_a) || 0;
+      m_necesaria = (sensitivity_val / 1000.0) / OMEGA;
+    }
 
     // 3. Vueltas (N) — fórmula distinta según sección
     let n_vueltas;
@@ -176,13 +185,15 @@ export const useRogowskiLogic = () => {
       gap_sugerido_mm: gap_mm,
       error: null
     };
-  }, [inputs, inputMode, sectionType]);
+  }, [inputs, inputMode, sectionType, sensitivityMode]);
 
   return {
     inputMode,
     setInputMode,
     sectionType,
     setSectionType,
+    sensitivityMode,
+    setSensitivityMode,
     inputs,
     setInputs,
     results
