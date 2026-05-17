@@ -17,6 +17,67 @@ const RogowskiCalculator = ({ onClose }) => {
     setInputs(prev => ({ ...prev, [field]: parseFloat(value) }));
   };
 
+  const generateTextReport = () => {
+    const date = new Date().toLocaleString();
+    let report = `=========================================\n`;
+    report += `    REPORTE DE DISEÑO: BOBINA DE ROGOWSKI\n`;
+    report += `=========================================\n`;
+    report += `Fecha: ${date}\n\n`;
+
+    report += `--- PARÁMETROS DE DISEÑO ---\n`;
+    if (inputMode === 'diametro') {
+      report += `Diámetro del Toroide: ${inputs.d_bobina_mm || 0} mm\n`;
+    } else {
+      report += `Longitud de Tira: ${inputs.longitud_tira_mm || 0} mm\n`;
+    }
+
+    if (sensitivityMode === 'voltage_current') {
+      report += `Voltaje Ref: ${inputs.v_out_target_mv} mV\n`;
+      report += `Corriente Ref: ${inputs.i_rated} A\n`;
+    } else {
+      report += `Sensibilidad: ${inputs.sensitivity_mv_a} mV/A\n`;
+    }
+    report += `Frecuencia: ${inputs.freq} Hz\n`;
+
+    if (sectionType === 'rectangular') {
+      report += `Sección: Rectangular\n`;
+      report += `Altura Núcleo: ${inputs.altura_nucleo_mm} mm\n`;
+      report += `Espesor Núcleo: ${inputs.espesor_nucleo_mm} mm\n`;
+    } else {
+      report += `Sección: Circular\n`;
+      report += `Radio Sección: ${inputs.radio_seccion_mm} mm\n`;
+    }
+    report += `Diámetro Hilo: ${inputs.diametro_hilo_mm} mm\n\n`;
+
+    report += `--- RESULTADOS ---\n`;
+    if (results.error) {
+      report += `ESTADO: ERROR - ${results.error}\n`;
+    } else {
+      report += `Viabilidad: ${results.es_viable ? 'VIABLE' : 'NO VIABLE'}\n`;
+      report += `Vueltas (N): ${results.vueltas}\n`;
+      report += `Longitud Hilo (Total): ${results.longitud_hilo_m?.toFixed(2)} m\n`;
+      report += `Resistencia DC: ${results.resistencia_ohm?.toFixed(2)} Ω\n`;
+      report += `Paso de Bobinado: ${results.paso_sugerido_mm?.toFixed(2)} mm\n`;
+      report += `Gap: ${results.gap_sugerido_mm?.toFixed(2)} mm\n`;
+      report += `Inductancia Mutua: ${results.inductancia_mutua_nH?.toFixed(2)} nH\n`;
+    }
+    
+    return report;
+  };
+
+  const handleExportTXT = () => {
+    const text = generateTextReport();
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `rogowski_report_${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="rogowski-overlay">
       <div className="rogowski-container">
@@ -24,7 +85,17 @@ const RogowskiCalculator = ({ onClose }) => {
         {/* HEADER */}
         <header className="rogowski-header">
           <h2><span>🌀</span> Rogowski Coil Designer</h2>
-          <button className="close-btn" onClick={onClose}>&times;</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <button 
+              className="toggle-btn" 
+              onClick={handleExportTXT}
+              style={{ fontSize: '0.8rem', padding: '0.4rem 1rem' }}
+              title="Guardar diseño como reporte TXT"
+            >
+              📄 Exportar TXT
+            </button>
+            <button className="close-btn" onClick={onClose}>&times;</button>
+          </div>
         </header>
 
         {/* COLUMNA IZQUIERDA: INPUTS */}
