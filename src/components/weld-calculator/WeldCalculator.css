@@ -243,16 +243,92 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
+  .weld-calculator-overlay {
+    padding: 1rem;
+  }
+
   .weld-calculator-container {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto 400px auto;
+    grid-template-rows: auto auto minmax(220px, 280px) auto;
     height: auto;
-    max-height: 95vh;
+    max-height: 96vh;
     overflow-y: auto;
   }
   
   .weld-panel.left, .weld-panel.right {
     border: none;
     border-bottom: 1px solid var(--secondary-color);
+  }
+
+  .weld-panel.center {
+    min-height: 240px;
+    height: 260px;
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .weld-calculator-overlay {
+    padding: 0.4rem;
+  }
+
+  .weld-calculator-container {
+    border-radius: 12px;
+    max-height: 98vh;
+  }
+
+  .weld-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .weld-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .weld-panel {
+    padding: 1rem;
+  }
+
+  .weld-panel.center {
+    min-height: 200px;
+    height: 220px;
+    padding: 0.5rem;
+  }
+
+  /* 2-Column Metrics Grid in Mobile */
+  .weld-panel.right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .panel-header {
+    grid-column: 1 / -1;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-card {
+    margin-bottom: 0;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .result-card.info {
+    grid-column: 1 / -1;
+  }
+
+  .result-value {
+    font-size: 1.35rem;
+  }
+
+  .result-label {
+    font-size: 0.7rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .result-subinfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    font-size: 0.72rem;
   }
 }

@@ -4,7 +4,7 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  padding: 1rem 0;
+  padding: 0.85rem 0;
   transition: background-color 0.3s;
 }
 
@@ -14,33 +14,114 @@
   align-items: center;
 }
 
+.logoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .logo {
   font-size: 1.5rem;
   font-weight: 800;
+  color: var(--primary-color);
+  letter-spacing: 0.5px;
+}
+
+.mobileActions {
+  display: none;
+  align-items: center;
+  gap: 12px;
+}
+
+.menuToggle {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: color 0.2s;
+}
+
+.menuToggle:hover {
   color: var(--primary-color);
 }
 
 .navLinks {
   display: flex;
   align-items: center;
+  gap: 24px;
 }
 
 .navLinks a {
-  margin-left: 20px;
   text-decoration: none;
   color: var(--secondary-color);
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+.navLinks a:hover {
+  color: var(--primary-color);
 }
 
 :global([data-theme='dark']) .navLinks a {
   color: var(--white);
 }
 
+:global([data-theme='dark']) .navLinks a:hover {
+  color: var(--primary-color);
+}
+
+.desktopThemeToggle {
+  display: flex;
+  align-items: center;
+}
+
 @media (max-width: 768px) {
   .navContent {
     flex-direction: column;
+    align-items: stretch;
   }
+
+  .logoRow {
+    width: 100%;
+  }
+
+  .mobileActions {
+    display: flex;
+  }
+
+  .desktopThemeToggle {
+    display: none;
+  }
+
   .navLinks {
-    margin-top: 1rem;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 1.25rem 0 0.5rem 0;
+    border-top: 1px solid rgba(128, 128, 128, 0.15);
+    margin-top: 0.75rem;
+    animation: navFadeIn 0.2s ease-out;
   }
+
+  .navLinks.navLinksOpen {
+    display: flex;
+  }
+
+  .navLinks a {
+    font-size: 1.1rem;
+    padding: 0.5rem 0;
+  }
+}
+
+@keyframes navFadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }

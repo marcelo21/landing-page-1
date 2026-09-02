@@ -428,11 +428,15 @@
 
 /* ── Responsive ── */
 @media (max-width: 1024px) {
+  .spot-strength-overlay {
+    padding: 1rem;
+  }
+
   .spot-strength-container {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto 400px auto;
+    grid-template-rows: auto auto minmax(220px, 280px) auto;
     height: auto;
-    max-height: 95vh;
+    max-height: 96vh;
     overflow-y: auto;
   }
 
@@ -440,5 +444,73 @@
   .ssc-panel.right {
     border: none;
     border-bottom: 1px solid var(--secondary-color);
+  }
+
+  .ssc-panel.center {
+    min-height: 240px;
+    height: 260px;
+  }
+}
+
+@media (max-width: 640px) {
+  .spot-strength-overlay {
+    padding: 0.4rem;
+  }
+
+  .spot-strength-container {
+    border-radius: 12px;
+    max-height: 98vh;
+  }
+
+  .ssc-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .ssc-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .ssc-panel.left {
+    padding: 1rem;
+  }
+
+  .ssc-panel.center {
+    min-height: 200px;
+    height: 220px;
+  }
+
+  .ssc-results-content {
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .ssc-panel-header,
+  .ssc-result-card.primary,
+  .ssc-result-card.status-ok,
+  .ssc-result-card.status-warn,
+  .ssc-result-card.status-fail,
+  .ssc-status-banner,
+  .ssc-result-card.info {
+    grid-column: 1 / -1;
+  }
+
+  .ssc-result-card {
+    margin-bottom: 0;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .ssc-result-value {
+    font-size: 1.35rem;
+  }
+
+  .ssc-result-label {
+    font-size: 0.7rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .sticky-disclaimer {
+    margin: 0.5rem 1rem;
   }
 }

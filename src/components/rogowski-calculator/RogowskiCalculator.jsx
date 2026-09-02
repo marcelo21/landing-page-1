@@ -133,6 +133,7 @@ const RogowskiCalculator = ({ onClose }) => {
                 <input
                   className="rogowski-input"
                   type="number"
+                  inputMode="decimal"
                   value={inputs.v_out_target_mv}
                   onChange={(e) => handleInputChange('v_out_target_mv', e.target.value)}
                 />
@@ -143,6 +144,7 @@ const RogowskiCalculator = ({ onClose }) => {
                 <input
                   className="rogowski-input"
                   type="number"
+                  inputMode="decimal"
                   value={inputs.i_rated}
                   onChange={(e) => handleInputChange('i_rated', e.target.value)}
                 />
@@ -154,6 +156,7 @@ const RogowskiCalculator = ({ onClose }) => {
               <input
                 className="rogowski-input"
                 type="number"
+                inputMode="decimal"
                 step="0.001"
                 value={inputs.sensitivity_mv_a !== undefined ? inputs.sensitivity_mv_a : ''}
                 onChange={(e) => handleInputChange('sensitivity_mv_a', e.target.value)}
@@ -166,6 +169,7 @@ const RogowskiCalculator = ({ onClose }) => {
             <input
               className="rogowski-input"
               type="number"
+              inputMode="decimal"
               value={inputs.freq}
               onChange={(e) => handleInputChange('freq', e.target.value)}
             />
@@ -191,6 +195,7 @@ const RogowskiCalculator = ({ onClose }) => {
               <input
                 className="rogowski-input"
                 type="number"
+                inputMode="decimal"
                 value={inputs.d_bobina_mm || 0}
                 onChange={(e) => handleInputChange('d_bobina_mm', e.target.value)}
               />
@@ -201,6 +206,7 @@ const RogowskiCalculator = ({ onClose }) => {
               <input
                 className="rogowski-input"
                 type="number"
+                inputMode="decimal"
                 value={inputs.longitud_tira_mm || 0}
                 onChange={(e) => handleInputChange('longitud_tira_mm', e.target.value)}
               />
@@ -214,6 +220,7 @@ const RogowskiCalculator = ({ onClose }) => {
                 <input
                   className="rogowski-input"
                   type="number"
+                  inputMode="decimal"
                   value={inputs.altura_nucleo_mm}
                   onChange={(e) => handleInputChange('altura_nucleo_mm', e.target.value)}
                 />
@@ -224,6 +231,7 @@ const RogowskiCalculator = ({ onClose }) => {
                 <input
                   className="rogowski-input"
                   type="number"
+                  inputMode="decimal"
                   value={inputs.espesor_nucleo_mm}
                   onChange={(e) => handleInputChange('espesor_nucleo_mm', e.target.value)}
                 />
@@ -235,6 +243,7 @@ const RogowskiCalculator = ({ onClose }) => {
               <input
                 className="rogowski-input"
                 type="number"
+                inputMode="decimal"
                 step="0.1"
                 value={inputs.radio_seccion_mm}
                 onChange={(e) => handleInputChange('radio_seccion_mm', e.target.value)}
@@ -247,6 +256,7 @@ const RogowskiCalculator = ({ onClose }) => {
             <input
               className="rogowski-input"
               type="number"
+              inputMode="decimal"
               step="0.001"
               value={inputs.diametro_hilo_mm}
               onChange={(e) => handleInputChange('diametro_hilo_mm', e.target.value)}

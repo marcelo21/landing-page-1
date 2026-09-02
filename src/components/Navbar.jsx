@@ -1,22 +1,38 @@
-/**
- * Navbar
- * @description Barra de navegación principal con enlaces y toggle de tema
- * @returns {JSX.Element} Elemento nav con logo y enlaces de navegación
- */
-import React from 'react';
+import React, { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import styles from './Navbar.module.css';
 
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
     <nav className={styles.navbar}>
       <div className={`container ${styles.navContent}`}>
-        <div className={styles.logo}>FEMAS TI</div>
-        <div className={styles.navLinks}>
-          <a href="#servicios">Servicios</a>
-          <a href="#nosotros">Nosotros</a>
-          <a href="#contacto">Contacto</a>
-          <ThemeToggle />
+        <div className={styles.logoRow}>
+          <div className={styles.logo}>FEMAS TI</div>
+          <div className={styles.mobileActions}>
+            <ThemeToggle />
+            <button 
+              className={styles.menuToggle} 
+              onClick={toggleMenu}
+              aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+
+        <div className={`${styles.navLinks} ${isMenuOpen ? styles.navLinksOpen : ''}`}>
+          <a href="#servicios" onClick={closeMenu}>Servicios</a>
+          <a href="#nosotros" onClick={closeMenu}>Nosotros</a>
+          <a href="#contacto" onClick={closeMenu}>Contacto</a>
+          <div className={styles.desktopThemeToggle}>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </nav>
