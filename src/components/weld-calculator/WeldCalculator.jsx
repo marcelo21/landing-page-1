@@ -214,6 +214,17 @@ const WeldCalculator = ({ onClose }) => {
             </div>
           </div>
 
+          <div className="result-card energy">
+            <div className="result-label">Energía de Proceso</div>
+            <div className="result-value">
+              {results.energy.toFixed(2)}<span className="result-unit">kJ</span>
+            </div>
+            <div className="result-subinfo">
+              <span>Potencia: <strong>{results.power.toFixed(1)} kW</strong></span>
+              <span>R<sub>din</sub>: <strong>{results.rdin.toFixed(0)} µΩ</strong></span>
+            </div>
+          </div>
+
           {mode === 'spot' && (
             <div className="result-card info">
               <div className="result-label">Datos Calidad</div>

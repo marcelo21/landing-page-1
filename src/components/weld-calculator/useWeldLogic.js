@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 
 const MATERIALS = {
-  "1": { name: "Acero Negro", Ki: 1.00, Kt: 1.00, Kf: 1.00, color: "#333333" },
-  "2": { name: "Galvanizado", Ki: 1.10, Kt: 1.05, Kf: 1.05, color: "#A0A0A0" },
-  "3": { name: "Aluminizado", Ki: 1.25, Kt: 1.10, Kf: 1.00, color: "#E0E0E0" },
-  "4": { name: "HSLA/DP",     Ki: 0.95, Kt: 0.95, Kf: 1.10, color: "#8B4513" },
-  "5": { name: "Inoxidable",  Ki: 0.90, Kt: 0.85, Kf: 1.10, color: "#C0C0C0" },
+  "1": { name: "Acero Negro", Ki: 1.00, Kt: 1.00, Kf: 1.00, Kr: 1.00, color: "#333333" },
+  "2": { name: "Galvanizado", Ki: 1.10, Kt: 1.05, Kf: 1.05, Kr: 0.85, color: "#A0A0A0" },
+  "3": { name: "Aluminizado", Ki: 1.25, Kt: 1.10, Kf: 1.00, Kr: 0.90, color: "#E0E0E0" },
+  "4": { name: "HSLA/DP",     Ki: 0.95, Kt: 0.95, Kf: 1.10, Kr: 1.15, color: "#8B4513" },
+  "5": { name: "Inoxidable",  Ki: 0.90, Kt: 0.85, Kf: 1.10, Kr: 1.40, color: "#C0C0C0" },
 };
 
 const PROJECTION_DATA = {
@@ -44,11 +44,13 @@ export const useWeldLogic = () => {
     const matFactors = MATERIALS[materialKey];
     let T_final = 0, I_final = 0, F_final = 0;
     let extraInfo = {};
+    let totalThickness = 0;
 
     if (mode === 'spot') {
       const activeThicknesses = thicknesses.filter(t => t > 0);
+      totalThickness = activeThicknesses.reduce((a, b) => a + b, 0);
       const t_ref = activeThicknesses.length > 0 
-        ? activeThicknesses.reduce((a, b) => a + b, 0) / activeThicknesses.length 
+        ? totalThickness / activeThicknesses.length 
         : 0;
       const t_min = activeThicknesses.length > 0 ? Math.min(...activeThicknesses) : 0;
       const t_max = activeThicknesses.length > 0 ? Math.max(...activeThicknesses) : 0;
@@ -91,6 +93,7 @@ export const useWeldLogic = () => {
       };
 
     } else if (mode === 'projection') {
+      totalThickness = projectionConfig.t_chapa;
       const data = PROJECTION_DATA[projectionConfig.rosca];
       let T_base = data.T;
       let I_base = (data.I_m * projectionConfig.t_chapa) + data.I_b;
@@ -116,10 +119,27 @@ export const useWeldLogic = () => {
       F_final = F_base * matFactors.Kf;
     }
 
+    // ── Cálculo Físico de Energía y Potencia (Efecto Joule: E = I^2 * R * t) ──
+    const rBase = 100; // µΩ (resistencia de contacto e interfaces)
+    const rDelta = 15; // µΩ/mm (resistencia de paso por espesor de chapa)
+    const rDinMicro = (rBase * (matFactors.Kr || 1.0)) + (totalThickness * rDelta); // en µΩ
+    const rDinOhms = rDinMicro * 1e-6; // en Ohms
+    
+    const iAmps = I_final * 1000; // en Amperes
+    const timeSec = T_final * 0.020; // 50 Hz -> 20 ms por ciclo
+    
+    const energyJoules = Math.pow(iAmps, 2) * rDinOhms * timeSec; // Joules
+    const energyKj = energyJoules / 1000; // kJ
+    const powerKw = (Math.pow(iAmps, 2) * rDinOhms) / 1000; // kW
+
     return {
       time: T_final,
       current: I_final,
       force: F_final,
+      energy: energyKj,
+      power: powerKw,
+      rdin: rDinMicro,
+      timeSec: timeSec,
       ...extraInfo,
       materialName: matFactors.name,
       materialColor: matFactors.color

@@ -179,8 +179,8 @@
 .result-card {
   background: var(--bg-surface);
   border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
+  padding: 1rem 1.15rem;
+  margin-bottom: 0.75rem;
   border: 1px solid var(--secondary-color);
   position: relative;
   overflow: hidden;
@@ -198,6 +198,7 @@
 .result-card.current::before { background: var(--primary-color); }
 .result-card.force::before { background: #9ece6a; }
 .result-card.time::before { background: #bb9af7; }
+.result-card.energy::before { background: #7aa2f7; }
 .result-card.info::before { background: var(--accent-color); }
 
 .result-label {
@@ -205,19 +206,34 @@
   color: var(--secondary-color);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 
 .result-value {
-  font-size: 1.75rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: var(--text-color);
 }
 
 .result-unit {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--secondary-color);
   margin-left: 0.25rem;
+}
+
+.result-subinfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  border-top: 1px dashed rgba(128, 128, 128, 0.2);
+  font-size: 0.78rem;
+  color: var(--secondary-color);
+}
+
+.result-subinfo strong {
+  color: var(--text-color);
 }
 
 /* Visualizer Stroke */
